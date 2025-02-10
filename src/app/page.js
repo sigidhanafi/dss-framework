@@ -38,9 +38,12 @@ export default function Home() {
         <div className='py-8 text-center'>
           <div className='flex justify-between items-center'>
             <h2 className='text-xl font-semibold'>Explore Topic</h2>
-            <a href='#' className='text-sm text-gray-600 hover:text-blue-500'>
+            <Link
+              href={'/topics'}
+              className='text-sm text-gray-600 hover:text-blue-500'
+            >
               Lihat Semua
-            </a>
+            </Link>
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
             <div className='bg-blue-200 p-4 rounded-lg'>
