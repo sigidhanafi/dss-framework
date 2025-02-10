@@ -4,9 +4,7 @@ import SettingCriteria from '@/components/setting-criteria';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-export default function CriteriaUpdate() {
-  const router = useRouter();
-
+export default function ProcessPage() {
   const criteria = [
     {
       name: 'Pengalaman',
@@ -25,15 +23,6 @@ export default function CriteriaUpdate() {
               desc: 'Sub Sub Sub',
               type: 'Benefit',
               weight: 'Tinggi',
-              subcriteria: [
-                {
-                  name: 'Sub Sub Sub Criteria',
-                  desc: 'Sub Sub Sub Sub',
-                  type: 'Benefit',
-                  weight: 'Tinggi',
-                  subcriteria: [],
-                },
-              ],
             },
           ],
         },

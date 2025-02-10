@@ -1,9 +1,118 @@
 'use client';
 
+import React from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function TopicDetailPage() {
   const router = useRouter();
+
+  const criteria = [
+    {
+      name: 'Pengalaman',
+      desc: 'Lama bekerja dalam bidang terkait',
+      type: 'Benefit',
+      weight: 'Tinggi',
+      subcriteria: [
+        {
+          name: '> 5 Tahun',
+          desc: 'Pengalaman lebih dari 5 tahun',
+          type: 'Benefit',
+          weight: 'Tinggi',
+          subcriteria: [
+            {
+              name: 'Sub Sub Criteria',
+              desc: 'Sub Sub Sub',
+              type: 'Benefit',
+              weight: 'Tinggi',
+              subcriteria: [
+                {
+                  name: 'Sub Sub Sub Criteria',
+                  desc: 'Sub Sub Sub Sub',
+                  type: 'Benefit',
+                  weight: 'Tinggi',
+                  subcriteria: [],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: '3-5 Tahun',
+          desc: 'Pengalaman antara 3 hingga 5 tahun',
+          type: 'Benefit',
+          weight: 'Sedang',
+        },
+        {
+          name: '< 3 Tahun',
+          desc: 'Pengalaman kurang dari 3 tahun',
+          type: 'Benefit',
+          weight: 'Rendah',
+        },
+      ],
+    },
+    {
+      name: 'Universitas',
+      desc: 'Asal universitas',
+      type: 'Benefit',
+      weight: 'Tinggi',
+      subcriteria: [],
+    },
+    {
+      name: 'IPK',
+      desc: 'Indeks Prestasi Kumulatif akademik',
+      type: 'Benefit',
+      weight: 'Sedang',
+      subcriteria: [
+        {
+          name: '> 3.5',
+          desc: 'IPK lebih dari 3.5',
+          type: 'Benefit',
+          weight: 'Tinggi',
+        },
+        {
+          name: '3.0 - 3.5',
+          desc: 'IPK antara 3.0 dan 3.5',
+          type: 'Benefit',
+          weight: 'Sedang',
+        },
+        {
+          name: '< 3.0',
+          desc: 'IPK kurang dari 3.0',
+          type: 'Benefit',
+          weight: 'Rendah',
+        },
+      ],
+    },
+  ];
+
+  const renderCriteria = (data, level = 0) => {
+    return data.map((crit, index) => {
+      return (
+        <React.Fragment key={index + level}>
+          <tr key={index + level} className='bg-white text-gray-700'>
+            <td className='border border-gray-300 flex-grow min-w-60'>
+              <div className='flex flex-row items-center'>
+                <div className={'flex bg-gray-300 h-1 w-' + level + '/5'}></div>
+                <p className='px-4'>{crit.name}</p>
+              </div>
+            </td>
+            <td className='border border-gray-300 px-4 py-2 flex-grow-0'>
+              {crit.desc}
+            </td>
+            <td className='border border-gray-300 px-4 py-2 text-center'>
+              {crit.type}
+            </td>
+            <td className='border border-gray-300 px-4 py-2 text-center'>
+              {crit.weight}
+            </td>
+          </tr>
+          {crit.subcriteria &&
+            crit.subcriteria.length > 0 &&
+            renderCriteria(crit.subcriteria, level + 1)}
+        </React.Fragment>
+      );
+    });
+  };
 
   return (
     <>
@@ -35,103 +144,7 @@ export default function TopicDetailPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                {[
-                  {
-                    name: 'Pengalaman',
-                    desc: 'Lama bekerja dalam bidang terkait',
-                    type: 'Benefit',
-                    weight: 'Tinggi',
-                    subcriteria: [
-                      {
-                        name: '> 5 Tahun',
-                        desc: 'Pengalaman lebih dari 5 tahun',
-                        type: 'Benefit',
-                        weight: 'Tinggi',
-                      },
-                      {
-                        name: '3-5 Tahun',
-                        desc: 'Pengalaman antara 3 hingga 5 tahun',
-                        type: 'Benefit',
-                        weight: 'Sedang',
-                      },
-                      {
-                        name: '< 3 Tahun',
-                        desc: 'Pengalaman kurang dari 3 tahun',
-                        type: 'Benefit',
-                        weight: 'Rendah',
-                      },
-                    ],
-                  },
-                  {
-                    name: 'Universitas',
-                    desc: 'Asal universitas',
-                    type: 'Benefit',
-                    weight: 'Tinggi',
-                    subcriteria: [],
-                  },
-                  {
-                    name: 'IPK',
-                    desc: 'Indeks Prestasi Kumulatif akademik',
-                    type: 'Benefit',
-                    weight: 'Sedang',
-                    subcriteria: [
-                      {
-                        name: '> 3.5',
-                        desc: 'IPK lebih dari 3.5',
-                        type: 'Benefit',
-                        weight: 'Tinggi',
-                      },
-                      {
-                        name: '3.0 - 3.5',
-                        desc: 'IPK antara 3.0 dan 3.5',
-                        type: 'Benefit',
-                        weight: 'Sedang',
-                      },
-                      {
-                        name: '< 3.0',
-                        desc: 'IPK kurang dari 3.0',
-                        type: 'Benefit',
-                        weight: 'Rendah',
-                      },
-                    ],
-                  },
-                ].flatMap((criterion, index) => [
-                  <tr key={index} className='bg-white text-gray-700'>
-                    <td className='border border-gray-300 px-4 py-2 font-semibold'>
-                      {criterion.name}
-                    </td>
-                    <td className='border border-gray-300 px-4 py-2'>
-                      {criterion.desc}
-                    </td>
-                    <td className='border border-gray-300 px-4 py-2 text-center'>
-                      {criterion.type}
-                    </td>
-                    <td className='border border-gray-300 px-4 py-2 text-center'>
-                      {criterion.weight}
-                    </td>
-                  </tr>,
-                  ...criterion.subcriteria.map((sub, i) => (
-                    <tr
-                      key={`${index}-${i}`}
-                      className='bg-gray-100 text-gray-700'
-                    >
-                      <td className='border border-gray-300 px-4 py-2 pl-6'>
-                        {sub.name}
-                      </td>
-                      <td className='border border-gray-300 px-4 py-2'>
-                        {sub.desc}
-                      </td>
-                      <td className='border border-gray-300 px-4 py-2 text-center'>
-                        {sub.type}
-                      </td>
-                      <td className='border border-gray-300 px-4 py-2 text-center'>
-                        {sub.weight}
-                      </td>
-                    </tr>
-                  )),
-                ])}
-              </tbody>
+              <tbody>{renderCriteria(criteria)}</tbody>
             </table>
           </div>
 
@@ -142,7 +155,7 @@ export default function TopicDetailPage() {
                 router.back();
               }}
             >
-              Cancel
+              Back
             </button>
             <button
               className='bg-blue-400 text-white px-4 py-2 rounded'
