@@ -6,7 +6,7 @@ import ModelSelect from './model-select';
 import AlternativeInput from './alternative-input';
 
 export default function FromInput() {
-  function calculateWPM(alternatives, criteria) {
+  function calculateWP(alternatives, criteria) {
     function calculateScore(scoreCriteria, criteriaList) {
       return criteriaList.reduce((total, criterion) => {
         if (criterion.subCriteria && criterion.subCriteria.length > 0) {
@@ -21,29 +21,56 @@ export default function FromInput() {
       }, 1);
     }
 
-    // 🔥 Hitung skor awal sebelum normalisasi
+    // Hitung skor awal sebelum normalisasi
     const scoredAlternatives = alternatives.map((alternative) => ({
       ...alternative,
       preferenceScore: calculateScore(alternative.scoreCriteria, criteria),
     }));
 
-    // ✅ Hitung total nilai dari semua preferenceScore
+    // Hitung total nilai dari semua preferenceScore
     const totalScore = scoredAlternatives.reduce(
       (sum, a) => sum + a.preferenceScore,
       0
     );
 
-    // ✅ Normalisasi hasil dengan membagi semua skor dengan `totalScore`
+    // Normalisasi hasil dengan membagi semua skor dengan `totalScore`
     const normalizedAlternatives = scoredAlternatives.map((alternative) => ({
       ...alternative,
       normalizedScore:
         totalScore > 0 ? alternative.preferenceScore / totalScore : 0,
     }));
 
-    // 🔽 Urutkan berdasarkan skor normalisasi
+    // Ranking berdasarkan skor normalisasi
     return normalizedAlternatives.sort(
       (a, b) => b.normalizedScore - a.normalizedScore
     );
+  }
+
+  function normalizeWeightWP(criteria) {
+    // Rekursif untuk normalisasi
+    function normalize(criteriaList, parentWeight = 1) {
+      // Hitung total bobot dari semua kriteria
+      const totalWeight = criteria.reduce((sum, item) => sum + item.weight, 0);
+
+      return criteriaList.map((item) => {
+        // Hitung bobot normalisasi
+        const normalizedWeight = (item.weight / totalWeight) * parentWeight;
+
+        // Jika ada sub-kriteria, normalisasi juga secara rekursif
+        const normalizedSubCriteria =
+          item.subCriteria.length > 0
+            ? normalize(item.subCriteria, normalizedWeight)
+            : [];
+
+        return {
+          ...item,
+          weight: normalizedWeight,
+          subCriteria: normalizedSubCriteria,
+        };
+      });
+    }
+
+    return normalize(criteria);
   }
 
   const alternatives = [
@@ -73,33 +100,6 @@ export default function FromInput() {
     },
   ];
 
-  function normalizeWeight(criteria) {
-    // Hitung total bobot dari semua kriteria utama
-    const totalWeight = criteria.reduce((sum, item) => sum + item.weight, 0);
-
-    // Rekursif untuk normalisasi
-    function normalize(criteriaList, parentWeight = 1) {
-      return criteriaList.map((item) => {
-        // Hitung bobot normalisasi
-        const normalizedWeight = (item.weight / totalWeight) * parentWeight;
-
-        // Jika ada sub-kriteria, normalisasi juga secara rekursif
-        const normalizedSubCriteria =
-          item.subCriteria.length > 0
-            ? normalize(item.subCriteria, normalizedWeight)
-            : [];
-
-        return {
-          ...item,
-          weight: normalizedWeight,
-          subCriteria: normalizedSubCriteria,
-        };
-      });
-    }
-
-    return normalize(criteria);
-  }
-
   // Contoh Data Kriteria (Tanpa Sub-Kriteria)
   const criteria = [
     { name: 'C1', weight: 5, subCriteria: [] },
@@ -109,12 +109,13 @@ export default function FromInput() {
   ];
 
   const handleOnProcess = (alternatives, criteria) => {
-    // 🔥 Normalisasi Weight
-    const normalizedCriteria = normalizeWeight(criteria);
+    // Caclulate with WP
+    // Normalisasi Weight
+    const normalizedCriteria = normalizeWeightWP(criteria);
     console.log(normalizedCriteria);
 
-    // 🔥 Hitung Ranking dengan WPM
-    const rankedAlternatives = calculateWPM(alternatives, normalizedCriteria);
+    // Hitung Ranking dengan WP
+    const rankedAlternatives = calculateWP(alternatives, normalizedCriteria);
     console.log(rankedAlternatives);
   };
 
