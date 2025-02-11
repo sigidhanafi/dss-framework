@@ -13,11 +13,20 @@ export const getTopics = async () => {
       }
   });
 
-  const topicsResponse = topics.map(topic => ({
+  const aliasesTopicList = topics.map(topic => ({
     id: topic.topicId,
     name: topic.name,
     author: topic.user.name
   }));
 
-  return topicsResponse;
+  return aliasesTopicList;
+};
+
+export const createTopic = async (name, description) => {
+  const userId = 1
+  
+  const topic = await prisma.topic.create({
+    data: { name, description, userId },
+  });
+  return topic;
 };

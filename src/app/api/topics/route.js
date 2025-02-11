@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getTopics } from '@/lib/services/topics';
+import { createTopic, getTopics } from '@/lib/services/topics';
 
 export async function GET() {
   try {
@@ -16,3 +16,23 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(req) {
+  const body = await req.json();
+  const { name, description } = body;
+
+  try {
+    const _ = await createTopic(name, description);
+    return NextResponse.json({
+      status: 200,
+      message: 'Success create topic',
+      data: {},
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error create topic', detail: error},
+      { status: 500 }
+    );
+  }
+}
+
