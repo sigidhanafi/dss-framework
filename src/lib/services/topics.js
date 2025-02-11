@@ -5,7 +5,7 @@ export const getTopics = async () => {
       select: {
           topicId: true,
           name: true,
-          user: {
+          creator: {
               select: {
                   name: true
               }
@@ -16,7 +16,7 @@ export const getTopics = async () => {
   const aliasesTopicList = topics.map(topic => ({
     id: topic.topicId,
     name: topic.name,
-    author: topic.user.name
+    author: topic.creator.name
   }));
 
   return aliasesTopicList;
@@ -37,10 +37,10 @@ export const getTopicById = async (id) => {
 };
 
 export const createTopic = async (name, description) => {
-  const userId = 1
+  const creatorId = 1
   
   const topic = await prisma.topic.create({
-    data: { name, description, userId },
+    data: { name, description, creatorId },
   });
   return topic;
 };

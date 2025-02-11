@@ -19,6 +19,7 @@ model User {
   password String  
   name String? 
   topics Topic[]
+  dss Dss[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -27,8 +28,8 @@ model Topic {
   topicId Int @id @default(autoincrement())
   name String
   description String?
-  user User @relation(fields: [userId], references: [userId])
-  userId Int
+  creator User @relation(fields: [creatorId], references: [userId])
+  creatorId Int
   criterias Criteria[]
   dss Dss[]
   createdAt DateTime @default(now())
@@ -60,6 +61,8 @@ model Dss {
   topicId Int
   method DssMethodType
   dssAlternatives DssAlternative[]
+  creator User @relation(fields: [creatorId], references: [userId])
+  creatorId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
