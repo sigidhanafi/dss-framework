@@ -45,8 +45,7 @@ export default function RootLayout({ children }) {
               </div>
             </div>
           </nav>
-
-          {children}
+          <div className='min-h-full'>{children}</div>
 
           {/* Footer */}
           <footer className='bg-blue-900 text-white text-center py-4 mt-auto'>

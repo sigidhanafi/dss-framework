@@ -1,10 +1,14 @@
 'use client';
 
+import AlternativeInput from '@/components/alternative-input';
 import SettingCriteria from '@/components/setting-criteria';
+import Stepper from '@/components/stepper';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-export default function ProcessPage() {
+export default function InputAlternativePage() {
+  const router = useRouter();
+
   const criteria = [
     {
       name: 'Pengalaman',
@@ -75,17 +79,47 @@ export default function ProcessPage() {
     },
   ];
 
-  var setSubCriterion = () => {};
+  const alternatives = [
+    { name: 'Sigit', desc: '-' },
+    { name: 'Silmi', desc: '-' },
+    { name: 'Alfy', desc: '-' },
+    { name: 'Rafa', desc: '-' },
+  ];
 
   return (
     <>
       {/* Header / Title */}
-      <div className='flex flex-col items-center justify-center min-h-60'>
-        <h1 className='text-3xl font-bold'>Memilih Kandidat Beasiswa</h1>
+      <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
+        <h1 className='text-3xl font-bold'>
+          Input Alternative: Memilih Kandidat Beasiswa
+        </h1>
         <p>Memilih kandidat penerima beasiswa LPDP 2025 jalur prestasi</p>
       </div>
 
-      <SettingCriteria criteria={criteria} />
+      <Stepper step={2} />
+
+      <AlternativeInput alternatives={alternatives} />
+
+      <div className='w-3/5 mx-auto'>
+        <div className='flex justify-end space-x-4 my-4'>
+          <button
+            className='bg-gray-400 text-white px-4 py-2 rounded'
+            onClick={() => {
+              router.back();
+            }}
+          >
+            Back
+          </button>
+          <button
+            className='bg-blue-400 text-white px-4 py-2 rounded'
+            onClick={() => {
+              router.push('/proceses/2');
+            }}
+          >
+            Review Process
+          </button>
+        </div>
+      </div>
     </>
   );
 }

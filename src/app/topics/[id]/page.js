@@ -117,13 +117,13 @@ export default function TopicDetailPage() {
   return (
     <>
       {/* Header / Title */}
-      <div className='flex flex-col items-center justify-center min-h-60'>
-        <h1 className='text-3xl font-bold'>Memilih Kandidat Beasiswa</h1>
+      <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
+        <h1 className='text-3xl font-bold'>Topic: Memilih Kandidat Beasiswa</h1>
         <p>Memilih kandidat penerima beasiswa LPDP 2025 jalur prestasi</p>
       </div>
 
       {/* Topic Selection with Criteria Table */}
-      <div className='py-8'>
+      <div className='my-4'>
         <div className='w-3/5 mx-auto'>
           <h2 className='text-xl font-semibold mb-4'>Criteria</h2>
           <div className='overflow-x-auto'>
@@ -163,10 +163,15 @@ export default function TopicDetailPage() {
                 router.push('/topics/2/update');
               }}
             >
-              Update Criteria
+              Manage Criteria
             </button>
-            <button className='bg-blue-400 text-white px-4 py-2 rounded'>
-              Use Criteria
+            <button
+              className='bg-blue-400 text-white px-4 py-2 rounded'
+              onClick={() => {
+                router.push('/proceses/2/select-criteria');
+              }}
+            >
+              Choose Topic
             </button>
           </div>
         </div>
