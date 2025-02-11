@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getTopics } from '@/lib/topic-services';
+import { getTopics } from '@/lib/services/topics';
 
 export async function GET() {
   try {
