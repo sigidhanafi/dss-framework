@@ -22,6 +22,20 @@ export const getTopics = async () => {
   return aliasesTopicList;
 };
 
+export const getTopicById = async (id) => {
+  const topic = await prisma.topic.findUnique({
+    where: { topicId: parseInt(id) },
+    select: {
+        topicId: true,
+        name: true,
+        description: true,
+        criterias: true
+    }
+  });
+
+  return topic;
+};
+
 export const createTopic = async (name, description) => {
   const userId = 1
   

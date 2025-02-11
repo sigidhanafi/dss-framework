@@ -11,7 +11,7 @@ export async function GET() {
     });
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error fetching topic' },
+      { message: 'Error fetching topic', detail: error },
       { status: 500 }
     );
   }
@@ -30,7 +30,7 @@ export async function POST(req) {
     });
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error create topic', detail: error},
+      { message: 'Error create topic', detail: error },
       { status: 500 }
     );
   }
