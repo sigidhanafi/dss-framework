@@ -20,4 +20,24 @@ export async function POST(req) {
     }
   }
 
+
+/*
+--> POST {url}/api/alternatives
+--> CREATE NEW ALTERNATIVE
+REQ BODY
+{
+    "dssId": 1,
+    "alternativeName": "Nasi Padang",
+    "description": "Nasi Padang"
+}
+
+RES BODY
+{
+    "status": 200,
+    "message": "Success create alternative",
+    "data": {}
+}
+*/
+
+
   

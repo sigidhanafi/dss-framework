@@ -22,7 +22,7 @@ export const getTopics = async () => {
   return aliasesTopicList;
 };
 
-export const getTopicById = async (id) => {
+export const getTopicDetail = async (id) => {
   const topic = await prisma.topic.findUnique({
     where: { topicId: parseInt(id)},
     select: {
@@ -32,6 +32,7 @@ export const getTopicById = async (id) => {
     }
   });
   const flatCriteriaList = await prisma.criteria.findMany({
+    where: { topicId: parseInt(id)},
     select: {
       criteriaId: true,
       name: true,

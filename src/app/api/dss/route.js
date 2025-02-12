@@ -19,3 +19,23 @@ export async function POST(req) {
       );
     }
   }
+
+/*
+--> POST {url}/api/dss
+--> CHOOSE TOPIC AND METHOD
+REQ BODY
+{ 
+    "topicId": 1,
+    "method":"WP"
+}
+
+RES BODY
+{
+    "status": 200,
+    "message": "Success create dss",
+    "data": {
+        "dssId": 2
+    }
+}
+*/
+

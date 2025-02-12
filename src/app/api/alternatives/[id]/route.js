@@ -58,3 +58,44 @@ export async function PUT(req, { params }) {
         );
     }
 }
+
+/*
+--> GET {url}/api/alternatives/:id_alternative
+--> GET ALTERNATIVE DETAIL
+RES BODY
+{
+    "status": 200,
+    "message": "Success fetch alternative",
+    "data": {
+        "dssAlternativeId": 2,
+        "alternativeName": "Ganti",
+        "description": null
+    }
+}
+
+--> PUT {url}/api/alternatives/:id_alternative
+--> UPDATE ALTERNATIVE
+
+REQ BODY
+{
+    "alternativeName": "Putra Bahari",
+    "description": "Warteg"
+}
+
+RES BODY
+{
+    "status": 200,
+    "message": "Success update alternative",
+    "data": {}
+}
+
+--> DELETE {url}/api/alternatives/:id_alternative
+--> DELETE ALTERNATIVE
+
+RES BODY
+{
+    "status": 200,
+    "message": "Success delete alternative",
+    "data": "success"
+}
+*/

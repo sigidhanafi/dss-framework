@@ -42,3 +42,42 @@ export async function PUT(req, { params }) {
         );
     }
 }
+
+
+/*
+--> GET {url}/api/criterias/:id_criteria
+--> GET CRITERIA DETAIL
+RES BODY
+{
+    "status": 200,
+    "message": "Success fetch criteria",
+    "data": {
+        "criteriaId": 4,
+        "name": "Sehat",
+        "description": "Bergizi",
+        "type": "BENEFIT",
+        "weight": 1
+    }
+}
+
+--> PUT {url}/api/criterias/:id_criteria
+--> UPDATE CRITERIA
+REQ BODY
+{ 
+    "name":"Sehat",
+    "description": "Bergizi",
+    "type":"BENEFIT", 
+    "weight":1
+}
+
+RES BODY
+{
+    "status": 200,
+    "message": "Success update criteria",
+    "data": {}
+}
+
+
+*/
+
+

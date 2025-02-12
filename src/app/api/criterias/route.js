@@ -25,3 +25,28 @@ export async function POST(req) {
       );
     }
   }
+
+
+/*
+--> POST {url}/api/criterias
+--> CREATE NEW CRITERIA
+REQ BODY
+{ 
+    "topicId": 1,
+    "name":"Harga",
+    "description": "Harus Murah",
+    "type":"COST", 
+    "weight":5, 
+    "parentCriteriaId":null
+}
+
+RES BODY
+{
+    "status": 200,
+    "message": "Success create criteria",
+    "data": {}
+}
+*/
+
+
+

@@ -19,3 +19,21 @@ export async function GET(req, { params }) {
         );
     }
 }
+
+/*
+--> GET {url}/api/dss/:id_dss/alternatives
+GET DSS ALTERNATIVE LIST
+RES BODY
+{
+    "status": 200,
+    "message": "Success fetch alternative",
+    "data": [
+        {
+            "dssAlternativeId": 1,
+            "alternativeName": "Nasi Padang",
+            "description": "Nasi Padang"
+        }
+    ]
+}
+*/
+

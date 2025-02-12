@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { addCriterias, getDetailDss, saveDssResult } from '@/lib/services/dss';
 
-export async function GET({ params }) {
+export async function GET(req, { params }) {
     const { id } = await params;
 
     try {
@@ -38,3 +38,67 @@ export async function POST(req) {
     );
   }
 };
+
+
+/*
+--> POST {url}/api/dss/:id_dss
+--> SAVE DSS VALUES AND RESULT
+REQ BODY
+{
+    "criterias": [
+        {
+            "criteriaId": 1,
+            "dssAlternativeId": 2,
+            "value": 20
+        }
+    ],
+    "dssResult": [{
+        "dssAlternativeId": 2,
+        "sValue": 2,
+        "rankValue": 3
+    }]
+}
+
+RES BODY
+{
+    "status": 200,
+    "message": "Success save dss result",
+    "data": {}
+}
+
+--> GET {url}/api/dss/:id_dss
+--> GET DSS DETAIL
+RES BODY
+{
+    "status": 200,
+    "message": "Success fetch alternative",
+    "data": {
+        "dssId": 1,
+        "topicId": 1,
+        "method": "WP",
+        "creator": {
+            "name": "Gon"
+        },
+        "dssAlternatives": [
+            {
+                "dssAlternativeId": 2,
+                "alternativeName": "Ganti",
+                "sValue": 2,
+                "rankValue": 3,
+                "description": "HEGE",
+                "dssCriterias": [
+                    {
+                        "criteria": {
+                            "criteriaId": 1,
+                            "name": "Harga"
+                        },
+                        "value": 20
+                    }
+                ]
+            }
+        ]
+    }
+}
+*/
+
+

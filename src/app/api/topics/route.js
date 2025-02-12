@@ -36,3 +36,35 @@ export async function POST(req) {
   }
 }
 
+/*
+--> POST {url}/api/topics
+CREATE NEW TOPIC
+REQ BODY
+{
+    "name": "Beli Makan Malam",
+    "description": "Beli Makan Malam"
+}
+
+RES BODY
+{
+    "status": 200,
+    "message": "Success create topic",
+    "data": {}
+}
+
+--> GET {url}/api/topics
+GET LIST TOPICS
+RES BODY
+{
+    "status": 200,
+    "message": "Success fetch topic",
+    "data": [
+        {
+            "id": 1,
+            "name": "Beli Makan Siang",
+            "author": "Gon"
+        }
+    ]
+}
+*/
+
