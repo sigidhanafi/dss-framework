@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { deleteAlternative, getAlternativeById, updateAlternative } from '@/lib/services/alternatives';
+import { deleteAlternative, getOneAlternative, updateAlternative } from '@/lib/services/alternatives';
 
 export async function GET(req, { params }) {
     const { id } = await params;
 
     try {
-        const alternative = await getAlternativeById(id);
+        const alternative = await getOneAlternative({dssAlternativeId: parseInt(id)});
         return NextResponse.json({
             status: 200,
             message: 'Success fetch alternative',

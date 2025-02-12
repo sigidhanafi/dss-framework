@@ -9,9 +9,28 @@ export const createAlternative = async (dssId, alternativeName, description) => 
     return alternative;
 };
 
-export const getAlternativeById = async (id) => {
+export const getAlternatives = async (q={}) => {
+    console.log(q);
+    const alternatives = await prisma.dssAlternative.findMany({
+      where: q,
+      select: {
+        dssAlternativeId: true,
+        alternativeName: true,
+        description: true
+      }
+    });
+  
+    return alternatives;
+  };
+
+export const getOneAlternative = async (q={}) => {
     const alternative = await prisma.dssAlternative.findUnique({
-      where: { dssAlternativeId: parseInt(id) }
+      where: q,
+      select: {
+        dssAlternativeId: true,
+        alternativeName: true,
+        description: true
+      }
     });
   
     return alternative;
@@ -34,5 +53,5 @@ export const deleteAlternative = async (alternativeId) => {
         where: { dssAlternativeId: parseInt(alternativeId) }
     });
     
-    return 'success';
+    return;
 };

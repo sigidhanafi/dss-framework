@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
-import { getDssById } from '@/lib/services/dss';
+import { addCriterias, getDetailDss, saveDssResult } from '@/lib/services/dss';
 
-export async function GET(req, { params }) {
+export async function GET({ params }) {
     const { id } = await params;
 
     try {
-        const topics = await getDssById(id);
+        const dss = await getDetailDss(id);
         return NextResponse.json({
             status: 200,
             message: 'Success fetch alternative',
-            data: topics,
+            data: dss,
         });
     } catch (error) {
         return NextResponse.json(
@@ -18,3 +18,23 @@ export async function GET(req, { params }) {
         );
     }
 }
+
+export async function POST(req) {
+    const body = await req.json();
+    const { criterias, dssResult } = body;  
+    
+  try {
+    await addCriterias(criterias);
+    await saveDssResult(dssResult);
+    return NextResponse.json({
+      status: 200,
+      message: 'Success save dss result',
+      data: {},
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error save dss result', detail: error },
+      { status: 500 }
+    );
+  }
+};

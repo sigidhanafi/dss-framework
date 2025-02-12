@@ -47,6 +47,7 @@ model Criteria {
   childCriterias Criteria[] @relation("ParentCriteria")
   topic Topic @relation(fields: [topicId], references: [topicId])
   topicId Int
+  dssCriteria DssCriteria[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -82,6 +83,18 @@ model DssAlternative {
   description String?
   sValue Float?
   rankValue Int? 
+  dssCriterias DssCriteria[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model DssCriteria {
+  dssCriteriaId Int @id @default(autoincrement())
+  dssAlternative DssAlternative @relation(fields: [dssAlternativeId], references: [dssAlternativeId])
+  dssAlternativeId Int
+  criteria Criteria @relation(fields: [criteriaId], references: [criteriaId])
+  criteriaId Int
+  value Float?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
