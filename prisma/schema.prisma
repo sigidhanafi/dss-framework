@@ -39,6 +39,7 @@ model Topic {
 model Criteria {
   criteriaId Int @id @default(autoincrement())
   name String
+  description String?
   type CriteriaType @default(BENEFIT)
   weight Int
   parentCriteriaId Int?
@@ -78,8 +79,9 @@ model DssAlternative {
   dss Dss @relation(fields: [dssId], references: [dssId])
   dssId Int
   alternativeName String
-  sValue Float
-  rankValue Int 
+  description String?
+  sValue Float?
+  rankValue Int? 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
