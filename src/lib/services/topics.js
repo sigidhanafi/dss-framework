@@ -24,16 +24,32 @@ export const getTopics = async () => {
 
 export const getTopicById = async (id) => {
   const topic = await prisma.topic.findUnique({
-    where: { topicId: parseInt(id) },
+    where: { topicId: parseInt(id)},
     select: {
         topicId: true,
         name: true,
-        description: true,
-        criterias: true
+        description: true
     }
   });
+  const flatCriteriaList = await prisma.criteria.findMany({
+    select: {
+      criteriaId: true,
+      name: true,
+      description: true,
+      type: true,
+      weight: true,
+      parentCriteriaId: true
+    }});
 
-  return topic;
+  const criteriaTree = buildCriteriaTree(flatCriteriaList);
+
+  const res = {
+    topicId: topic.topicId,
+    name: topic.name,
+    description: topic.description,
+    criterias: criteriaTree
+  }
+  return res;
 };
 
 export const createTopic = async (name, description) => {
@@ -44,3 +60,12 @@ export const createTopic = async (name, description) => {
   });
   return topic;
 };
+
+function buildCriteriaTree(criteriaList, parentId = null) {
+  return criteriaList
+    .filter(item => item.parentCriteriaId === parentId)
+    .map(item => ({
+      ...item,
+      subCriteria: buildCriteriaTree(criteriaList, item.criteriaId),
+    }));
+}

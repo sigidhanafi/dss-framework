@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server';
-import { getTopicById } from '@/lib/services/topics';
+import { getDssById } from '@/lib/services/dss';
 
 export async function GET(req, { params }) {
     const { id } = await params;
 
     try {
-        const topics = await getTopicById(id);
+        const topics = await getDssById(id);
         return NextResponse.json({
             status: 200,
-            message: 'Success fetch topic',
+            message: 'Success fetch alternative',
             data: topics,
         });
     } catch (error) {
         return NextResponse.json(
-            { message: 'Error fetching topic', detail: error },
+            { message: 'Error fetching alternative', detail: error },
             { status: 500 }
         );
     }
