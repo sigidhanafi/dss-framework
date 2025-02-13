@@ -27,37 +27,35 @@ RES BODY
     "status": 200,
     "message": "Success fetch topic",
     "data": {
-        "topicId": 2,
-        "name": "Beli Makan Malam",
-        "description": "Beli Makan Malam",
+        "topicId": 1,
+        "name": "Beli Makan Siang",
+        "description": "Beli Makan Siang",
         "criterias": [
             {
-                "criteriaId": 1,
+                "criteriaId": 6,
                 "name": "Harga",
-                "description": null,
+                "description": "Yang harus dibayar",
                 "type": "COST",
-                "weight": 1,
+                "weight": 5,
                 "parentCriteriaId": null,
                 "subCriteria": [
                     {
-                        "criteriaId": 3,
-                        "name": "Lokasi",
-                        "description": null,
-                        "type": "COST",
-                        "weight": 2,
-                        "parentCriteriaId": 1,
+                        "criteriaId": 7,
+                        "name": "Bisa QRIS",
+                        "description": "Metode Pembayaran",
+                        "type": "BENEFIT",
+                        "weight": 1,
+                        "parentCriteriaId": 6,
                         "subCriteria": []
                     }
                 ]
-            },
+            }
+        ],
+        "alternatives": [
             {
-                "criteriaId": 5,
-                "name": "Tidak Basi",
-                "description": "Layak Makan",
-                "type": "BENEFIT",
-                "weight": 1,
-                "parentCriteriaId": null,
-                "subCriteria": []
+                "alternativeId": 1,
+                "name": "Nasi Padang",
+                "description": "Terenak"
             }
         ]
     }

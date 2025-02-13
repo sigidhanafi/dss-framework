@@ -31,6 +31,7 @@ model Topic {
   creator User @relation(fields: [creatorId], references: [userId])
   creatorId Int
   criterias Criteria[]
+  alternatives Alternative[]
   dss Dss[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -47,7 +48,19 @@ model Criteria {
   childCriterias Criteria[] @relation("ParentCriteria")
   topic Topic @relation(fields: [topicId], references: [topicId])
   topicId Int
-  dssCriteria DssCriteria[]
+  dssCriteriaAlternatives DssCriteriaAlternative[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Alternative {
+  alternativeId Int @id @default(autoincrement())
+  name String
+  description String?
+  topic Topic @relation(fields: [topicId], references: [topicId])
+  topicId Int
+  dssCriteriaAlternatives DssCriteriaAlternative[]
+  dssAlternatives DssAlternative[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -63,6 +76,7 @@ model Dss {
   topicId Int
   method DssMethodType
   dssAlternatives DssAlternative[]
+  dssCriteriaAlternatives DssCriteriaAlternative[]
   creator User @relation(fields: [creatorId], references: [userId])
   creatorId Int
   createdAt DateTime @default(now())
@@ -79,19 +93,20 @@ model DssAlternative {
   dssAlternativeId Int @id @default(autoincrement())
   dss Dss @relation(fields: [dssId], references: [dssId])
   dssId Int
-  alternativeName String
-  description String?
+  alternative Alternative @relation(fields: [alternativeId], references: [alternativeId])
+  alternativeId Int
   sValue Float?
   rankValue Int? 
-  dssCriterias DssCriteria[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
 
-model DssCriteria {
-  dssCriteriaId Int @id @default(autoincrement())
-  dssAlternative DssAlternative @relation(fields: [dssAlternativeId], references: [dssAlternativeId])
-  dssAlternativeId Int
+model DssCriteriaAlternative {
+  dssCriteriaAlternativeId Int @id @default(autoincrement())
+  dss Dss @relation(fields: [dssId], references: [dssId])
+  dssId Int
+  alternative Alternative @relation(fields: [alternativeId], references: [alternativeId])
+  alternativeId Int
   criteria Criteria @relation(fields: [criteriaId], references: [criteriaId])
   criteriaId Int
   value Float?

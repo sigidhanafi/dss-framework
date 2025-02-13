@@ -1,9 +1,9 @@
 import prisma from '../prisma';
 
-export const createAlternative = async (dssId, alternativeName, description) => {
+export const createAlternative = async (topicId, name, description) => {
     
-    const alternative = await prisma.dssAlternative.create({
-        data: { dssId, alternativeName, description },
+    const alternative = await prisma.alternative.create({
+        data: { topicId, name, description },
     });
     
     return alternative;
@@ -11,11 +11,11 @@ export const createAlternative = async (dssId, alternativeName, description) => 
 
 export const getAlternatives = async (q={}) => {
     console.log(q);
-    const alternatives = await prisma.dssAlternative.findMany({
+    const alternatives = await prisma.alternative.findMany({
       where: q,
       select: {
-        dssAlternativeId: true,
-        alternativeName: true,
+        alternativeId: true,
+        name: true,
         description: true
       }
     });
@@ -24,11 +24,11 @@ export const getAlternatives = async (q={}) => {
   };
 
 export const getOneAlternative = async (q={}) => {
-    const alternative = await prisma.dssAlternative.findUnique({
+    const alternative = await prisma.alternative.findUnique({
       where: q,
       select: {
-        dssAlternativeId: true,
-        alternativeName: true,
+        alternativeId: true,
+        name: true,
         description: true
       }
     });
@@ -38,8 +38,8 @@ export const getOneAlternative = async (q={}) => {
 
 export const updateAlternative = async (alternativeId, data) => {
   
-    const criteria = await prisma.dssAlternative.update({
-        where: { dssAlternativeId: parseInt(alternativeId) },
+    const criteria = await prisma.alternative.update({
+        where: { alternativeId: parseInt(alternativeId) },
         data: data,
     });
     
@@ -49,8 +49,8 @@ export const updateAlternative = async (alternativeId, data) => {
 
 export const deleteAlternative = async (alternativeId) => {
   
-    const _ = await prisma.dssAlternative.delete({
-        where: { dssAlternativeId: parseInt(alternativeId) }
+    const _ = await prisma.alternative.delete({
+        where: { alternativeId: parseInt(alternativeId) }
     });
     
     return;

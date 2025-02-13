@@ -19,13 +19,26 @@ export async function GET(req, { params }) {
     }
 }
 
-export async function POST(req) {
+export async function POST(req, { params }) {
+    const { id } = await params;
+
     const body = await req.json();
     const { criterias, dssResult } = body;  
     
   try {
-    await addCriterias(criterias);
-    await saveDssResult(dssResult);
+
+    let criteriaWithDssId = criterias.map((criteria) => ({
+        ...criteria, 
+        dssId: parseInt(id)
+    }));
+    await addCriterias(criteriaWithDssId);
+
+    let dssResultWithDssId = dssResult.map((res) => ({
+        ...res, 
+        dssId: parseInt(id)
+    }));
+    await saveDssResult(dssResultWithDssId);
+
     return NextResponse.json({
       status: 200,
       message: 'Success save dss result',
@@ -48,12 +61,12 @@ REQ BODY
     "criterias": [
         {
             "criteriaId": 1,
-            "dssAlternativeId": 2,
+            "alternativeId": 2,
             "value": 20
         }
     ],
     "dssResult": [{
-        "dssAlternativeId": 2,
+        "alternativeId": 2,
         "sValue": 2,
         "rankValue": 3
     }]
@@ -73,28 +86,38 @@ RES BODY
     "status": 200,
     "message": "Success fetch alternative",
     "data": {
-        "dssId": 1,
-        "topicId": 1,
+        "dssId": 3,
+        "topic": {
+            "topicId": 1,
+            "name": "Beli Makan Siang"
+        },
         "method": "WP",
         "creator": {
             "name": "Gon"
         },
         "dssAlternatives": [
             {
-                "dssAlternativeId": 2,
-                "alternativeName": "Ganti",
-                "sValue": 2,
+                "dssAlternativeId": 5,
+                "alternative": {
+                    "alternativeId": 1,
+                    "name": "Nasi Padang"
+                },
                 "rankValue": 3,
-                "description": "HEGE",
-                "dssCriterias": [
-                    {
-                        "criteria": {
-                            "criteriaId": 1,
-                            "name": "Harga"
-                        },
-                        "value": 20
-                    }
-                ]
+                "sValue": 2
+            }
+        ],
+        "dssCriteriaAlternatives": [
+            {
+                "dssCriteriaAlternativeId": 8,
+                "alternative": {
+                    "alternativeId": 1,
+                    "name": "Nasi Padang"
+                },
+                "criteria": {
+                    "criteriaId": 6,
+                    "name": "Harga"
+                },
+                "value": 20
             }
         ]
     }

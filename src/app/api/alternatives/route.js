@@ -3,10 +3,10 @@ import { createAlternative } from '@/lib/services/alternatives';
 
 export async function POST(req) {
     const body = await req.json();
-    const { dssId, alternativeName, description } = body;
+    const { topicId, name, description } = body;
  
     try {
-      const _ = await createAlternative(dssId, alternativeName, description);
+      const _ = await createAlternative(topicId, name, description);
       return NextResponse.json({
         status: 200,
         message: 'Success create alternative',
@@ -26,8 +26,8 @@ export async function POST(req) {
 --> CREATE NEW ALTERNATIVE
 REQ BODY
 {
-    "dssId": 1,
-    "alternativeName": "Nasi Padang",
+    "topicId": 1,
+    "name": "Nasi Padang",
     "description": "Nasi Padang"
 }
 

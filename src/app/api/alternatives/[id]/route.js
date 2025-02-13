@@ -5,7 +5,7 @@ export async function GET(req, { params }) {
     const { id } = await params;
 
     try {
-        const alternative = await getOneAlternative({dssAlternativeId: parseInt(id)});
+        const alternative = await getOneAlternative({alternativeId: parseInt(id)});
         return NextResponse.json({
             status: 200,
             message: 'Success fetch alternative',
@@ -67,9 +67,9 @@ RES BODY
     "status": 200,
     "message": "Success fetch alternative",
     "data": {
-        "dssAlternativeId": 2,
-        "alternativeName": "Ganti",
-        "description": null
+        "alternativeId": 1,
+        "name": "Nasi Padang",
+        "description": "Terenak"
     }
 }
 
@@ -78,8 +78,8 @@ RES BODY
 
 REQ BODY
 {
-    "alternativeName": "Putra Bahari",
-    "description": "Warteg"
+    "name": "Putra Bahari",
+    "description": "Terenak"
 }
 
 RES BODY

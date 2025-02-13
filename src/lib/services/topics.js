@@ -28,7 +28,14 @@ export const getTopicDetail = async (id) => {
     select: {
         topicId: true,
         name: true,
-        description: true
+        description: true,
+        alternatives: {
+          select: {
+            alternativeId: true,
+            name: true,
+            description: true
+          }
+        }
     }
   });
   const flatCriteriaList = await prisma.criteria.findMany({
@@ -48,7 +55,8 @@ export const getTopicDetail = async (id) => {
     topicId: topic.topicId,
     name: topic.name,
     description: topic.description,
-    criterias: criteriaTree
+    criterias: criteriaTree,
+    alternatives: topic.alternatives,
   }
   return res;
 };

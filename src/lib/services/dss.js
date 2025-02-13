@@ -16,33 +16,49 @@ export const getDetailDss = async (dssId) => {
     const dss = await prisma.dss.findUnique({
         select: {
             dssId: true,
-            topicId: true,
+            topic: {
+                select: {
+                    topicId: true,
+                    name: true
+                }
+            },
             method: true,
             creator: {
                 select: {
                     name: true
                 }
-            },   
+            },
             dssAlternatives: {
                 select: {
                     dssAlternativeId: true,
-                    alternativeName: true,
-                    sValue: true,
-                    rankValue: true,
-                    description: true,
-                    dssCriterias: {
+                    alternative: {
                         select: {
-                            criteria: {
-                                select: {
-                                    criteriaId: true,
-                                    name: true,
-                                }
-                            },
-                            value: true,
+                            alternativeId: true,
+                            name: true
                         }
-                    }
+                    },
+                    rankValue: true,
+                    sValue: true
                 }
             },
+            dssCriteriaAlternatives: {
+                select: {
+                    dssCriteriaAlternativeId: true,
+                    alternative: {
+                        select: {
+                            alternativeId: true,
+                            name: true
+                        }
+                    },
+                    criteria: {
+                        select: {
+                            criteriaId: true,
+                            name: true
+                        }
+                    },
+                    value: true,
+                }
+            }
         },
         where: { dssId: parseInt(dssId) },
             
@@ -53,7 +69,7 @@ export const getDetailDss = async (dssId) => {
 
 export const addCriterias = async (data) => {
 
-    const _ = await prisma.dssCriteria.createMany({
+    const _ = await prisma.dssCriteriaAlternative.createMany({
         data: data,
     });
     
@@ -61,14 +77,10 @@ export const addCriterias = async (data) => {
 };
 
 export const saveDssResult = async (data) => {
-    await prisma.$transaction(
-        data.map((v) =>
-          prisma.dssAlternative.update({
-            where: { dssAlternativeId: v.dssAlternativeId },
-            data: { sValue: v.sValue, rankValue: v.rankValue },
-          })
-        )
-      );
+    console.log(data)
+    const _ = await prisma.dssAlternative.createMany({
+        data: data
+    });
       
     return;
 };
