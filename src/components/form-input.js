@@ -1,10 +1,5 @@
 'use client';
 
-import ProblemInput from './problem-input';
-import CriteriaInput from './criteria-input';
-import ModelSelect from './model-select';
-import AlternativeInput from './alternative-input';
-
 export default function FromInput() {
   function calculateWP(alternatives, criteria) {
     function calculateScore(scoreCriteria, criteriaList) {
@@ -126,12 +121,6 @@ export default function FromInput() {
         Input DSS Problem. Make sure you have the list of criterias and the list
         of alternatives.
       </p>
-
-      <ProblemInput />
-
-      <CriteriaInput />
-
-      <ModelSelect />
 
       <div className='mt-6 flex items-center justify-end gap-x-6'>
         <button
