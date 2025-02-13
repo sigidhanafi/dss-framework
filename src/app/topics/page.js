@@ -3,12 +3,29 @@
 import Modal from '@/components/modal';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function TopicPage() {
   const router = useRouter();
 
+  const [topics, setTopics] = useState([]);
   const [showForm, setShowForm] = useState(false);
+
+  const fetchTopics = async () => {
+    const response = await fetch('/api/topics', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const responseJson = await response.json();
+
+    console.log('RESPONSE', responseJson);
+    setTopics(responseJson.data);
+  };
+
+  useEffect(() => {
+    fetchTopics();
+  }, []);
 
   return (
     <>
@@ -44,58 +61,7 @@ export default function TopicPage() {
             </button>
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
-            {[
-              {
-                id: 1,
-                name: 'Memilih Kandidat Karyawan Terbaik',
-                author: 'sigidhanafi',
-              },
-              {
-                id: 2,
-                name: 'Memilih Kandidat Beasiswa',
-                author: 'Silmi',
-              },
-              {
-                id: 3,
-                name: 'Memilih HP terbaik 2025',
-                author: 'Alfy',
-              },
-              {
-                id: 4,
-                name: 'Memilih Kampus Terbaik 2025',
-                author: 'Rafa',
-              },
-              {
-                id: 5,
-                name: 'Memilih Kandidat Karyawan Terbaik',
-                author: 'sigidhanafi',
-              },
-              {
-                id: 6,
-                name: 'Memilih Kandidat Beasiswa',
-                author: 'Silmi',
-              },
-              {
-                id: 7,
-                name: 'Memilih HP terbaik 2025',
-                author: 'Alfy',
-              },
-              {
-                id: 8,
-                name: 'Memilih Kampus Terbaik 2025',
-                author: 'Rafa',
-              },
-              {
-                id: 9,
-                name: 'Memilih Kandidat Karyawan Terbaik',
-                author: 'sigidhanafi',
-              },
-              {
-                id: 10,
-                name: 'Memilih Kandidat Beasiswa',
-                author: 'Silmi',
-              },
-            ].map((item) => {
+            {topics.map((item) => {
               return (
                 <Link key={item.id} href={'/topics/' + item.id}>
                   <div className='bg-blue-200 p-4 rounded-lg'>
