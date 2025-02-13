@@ -1,5 +1,6 @@
 'use client';
 
+import AlternativeInput from '@/components/alternative-input';
 import SettingCriteria from '@/components/setting-criteria';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -86,22 +87,58 @@ export default function CriteriaUpdate() {
     },
   ];
 
-  var setSubCriterion = () => {};
+  const alternatives = [
+    { name: 'Sigit' },
+    { name: 'Silmi' },
+    { name: 'Alfy' },
+    { name: 'Rafa' },
+  ];
 
   return (
     <>
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
-        <h1 className='text-3xl font-bold'>Topic: Memilih Kandidat Beasiswa</h1>
+        <h1 className='text-3xl font-bold'>
+          Manage Topic: Memilih Kandidat Beasiswa
+        </h1>
         <p>Memilih kandidat penerima beasiswa LPDP 2025 jalur prestasi</p>
       </div>
 
       <SettingCriteria
         title={'Manage Criteria'}
         criteria={criteria}
+        action={'setting'}
         settingAction={true}
         processAction={false}
       />
+
+      <AlternativeInput
+        title={'Manage Alternatives'}
+        alternatives={alternatives}
+        action={'setting'}
+      />
+
+      {/* Action */}
+      <div className='w-3/5 mx-auto my-10'>
+        <div className='flex justify-end space-x-4 my-4'>
+          <button
+            className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
+            onClick={() => {
+              router.back();
+            }}
+          >
+            Back
+          </button>
+          <button
+            className='bg-blue-400 text-white px-4 py-2 rounded'
+            onClick={() => {
+              router.back();
+            }}
+          >
+            Done
+          </button>
+        </div>
+      </div>
     </>
   );
 }

@@ -6,7 +6,7 @@ import Stepper from '@/components/stepper';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-export default function ProcessPage() {
+export default function AlternativeValuePage() {
   const [selectedMethod, setSelectedMethod] = useState('SAW');
 
   const router = useRouter();
@@ -98,13 +98,6 @@ export default function ProcessPage() {
 
       <Stepper step={3} />
 
-      <SettingCriteria
-        title={'Criteria'}
-        criteria={criteria}
-        settingAction={false}
-        processAction={false}
-      />
-
       <AlternativeValue
         criteria={criteria}
         alternatives={alternatives}
@@ -150,7 +143,7 @@ export default function ProcessPage() {
       <div className='w-3/5 mx-auto my-10'>
         <div className='flex justify-end space-x-4 my-4'>
           <button
-            className='bg-gray-400 text-white px-4 py-2 rounded'
+            className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
             onClick={() => {
               router.back();
             }}
@@ -160,7 +153,7 @@ export default function ProcessPage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              // router.push('/proceses/2/input-alternative');
+              router.replace('/proceses/2/alternative-rank');
             }}
           >
             Calculate

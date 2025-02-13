@@ -6,7 +6,7 @@ import Stepper from '@/components/stepper';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-export default function InputAlternativePage() {
+export default function ReviewAlternativePage() {
   const router = useRouter();
 
   const criteria = [
@@ -98,12 +98,16 @@ export default function InputAlternativePage() {
 
       <Stepper step={2} />
 
-      <AlternativeInput alternatives={alternatives} />
+      <AlternativeInput
+        title={'Alternatives'}
+        alternatives={alternatives}
+        action={'process'}
+      />
 
       <div className='w-3/5 mx-auto'>
         <div className='flex justify-end space-x-4 my-4'>
           <button
-            className='bg-gray-400 text-white px-4 py-2 rounded'
+            className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
             onClick={() => {
               router.back();
             }}
@@ -113,7 +117,7 @@ export default function InputAlternativePage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              router.push('/proceses/2');
+              router.push('/proceses/2/alternative-value');
             }}
           >
             Review Process

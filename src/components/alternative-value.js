@@ -81,7 +81,7 @@ export default function AlternativeValue({
           {showAction && (
             <div className='flex justify-end space-x-4 my-4'>
               <button
-                className='bg-gray-400 text-white px-4 py-2 rounded'
+                className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
                 onClick={() => {
                   // router.back();
                 }}
@@ -92,7 +92,7 @@ export default function AlternativeValue({
                 className='bg-blue-400 text-white px-4 py-2 rounded'
                 onClick={() => {
                   // router.back();
-                  router.push('/proceses/2/input-alternative');
+                  router.push('/proceses/2/review-alternative');
                 }}
               >
                 Input Alternatives

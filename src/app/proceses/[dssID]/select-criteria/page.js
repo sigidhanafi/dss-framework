@@ -91,6 +91,7 @@ export default function SelectCriteria() {
       <SettingCriteria
         title={'Setting Criteria'}
         criteria={criteria}
+        action={'process'}
         settingAction={false}
         processAction={true}
       />

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import AlternativeInput from '@/components/alternative-input';
 
 export default function TopicDetailPage() {
   const router = useRouter();
@@ -85,6 +86,13 @@ export default function TopicDetailPage() {
     },
   ];
 
+  const alternatives = [
+    { name: 'Sigit' },
+    { name: 'Silmi' },
+    { name: 'Alfy' },
+    { name: 'Rafa' },
+  ];
+
   const renderCriteria = (data, level = 0) => {
     return data.map((crit, index) => {
       return (
@@ -147,33 +155,38 @@ export default function TopicDetailPage() {
               <tbody>{renderCriteria(criteria)}</tbody>
             </table>
           </div>
+        </div>
+      </div>
 
-          <div className='flex justify-end space-x-4 my-4'>
-            <button
-              className='bg-gray-400 text-white px-4 py-2 rounded'
-              onClick={() => {
-                router.back();
-              }}
-            >
-              Back
-            </button>
-            <button
-              className='bg-blue-400 text-white px-4 py-2 rounded'
-              onClick={() => {
-                router.push('/topics/2/update');
-              }}
-            >
-              Manage Criteria
-            </button>
-            <button
-              className='bg-blue-400 text-white px-4 py-2 rounded'
-              onClick={() => {
-                router.push('/proceses/2/select-criteria');
-              }}
-            >
-              Choose Topic
-            </button>
-          </div>
+      <AlternativeInput alternatives={alternatives} action={'none'} />
+
+      {/* Action */}
+      <div className='w-3/5 mx-auto'>
+        <div className='flex justify-end space-x-4 my-4'>
+          <button
+            className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
+            onClick={() => {
+              router.back();
+            }}
+          >
+            Back
+          </button>
+          <button
+            className='bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
+            onClick={() => {
+              router.push('/topics/2/update');
+            }}
+          >
+            Manage Topic
+          </button>
+          <button
+            className='bg-blue-400 text-white px-4 py-2 rounded'
+            onClick={() => {
+              router.push('/proceses/2/select-criteria');
+            }}
+          >
+            Choose Topic
+          </button>
         </div>
       </div>
     </>
