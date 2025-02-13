@@ -152,7 +152,9 @@ export default function AlternativeValuePage() {
           </button>
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
-            onClick={() => {}}
+            onClick={() => {
+              router.replace('/proceses/2/alternative-rank');
+            }}
           >
             Calculate
           </button>
