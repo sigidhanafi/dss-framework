@@ -131,17 +131,18 @@ export default function FromInput() {
 
       <CriteriaInput />
 
-      <AlternativeInput alternatives={alternatives} criteria={criteria} />
-
       <ModelSelect />
 
       <div className='mt-6 flex items-center justify-end gap-x-6'>
-        <button type='button' className='text-sm/6 font-semibold text-gray-900'>
+        <button
+          type='button'
+          className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
+        >
           Cancel
         </button>
         <button
           type='button'
-          className='rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+          className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
           onClick={() => handleOnProcess(alternatives, criteria)}
         >
           Save

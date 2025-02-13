@@ -1,12 +1,14 @@
 'use client';
 
-import AlternativeInput from '@/components/alternative-input';
+import AlternativeValue from '@/components/alternative-value';
 import SettingCriteria from '@/components/setting-criteria';
 import Stepper from '@/components/stepper';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-export default function InputAlternativePage() {
+export default function AlternativeValuePage() {
+  const [selectedMethod, setSelectedMethod] = useState('SAW');
+
   const router = useRouter();
 
   const criteria = [
@@ -80,30 +82,68 @@ export default function InputAlternativePage() {
   ];
 
   const alternatives = [
-    { name: 'Sigit', desc: '-' },
-    { name: 'Silmi', desc: '-' },
-    { name: 'Alfy', desc: '-' },
-    { name: 'Rafa', desc: '-' },
+    { name: 'Sigit' },
+    { name: 'Silmi' },
+    { name: 'Alfy' },
+    { name: 'Rafa' },
   ];
 
   return (
     <>
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
-        <h1 className='text-3xl font-bold'>
-          Input Alternative: Memilih Kandidat Beasiswa
-        </h1>
+        <h1 className='text-3xl font-bold'>Topic: Memilih Kandidat Beasiswa</h1>
         <p>Memilih kandidat penerima beasiswa LPDP 2025 jalur prestasi</p>
       </div>
 
-      <Stepper step={2} />
+      <Stepper step={3} />
 
-      <AlternativeInput alternatives={alternatives} />
+      <AlternativeValue
+        criteria={criteria}
+        alternatives={alternatives}
+        showAction={false}
+      />
 
-      <div className='w-3/5 mx-auto'>
+      {/* Method Selection Section */}
+      <div className='w-3/5 mx-auto mt-10'>
+        <h2 className='text-lg font-semibold mb-4'>Choose Method</h2>
+        <div className='grid grid-cols-3 gap-6'>
+          {['WP', 'SAW', 'TOPSIS'].map((method, index) => (
+            <div
+              key={index}
+              className={`border p-4 rounded shadow-sm text-center hover:bg-gray-100 cursor-pointer flex items-center justify-between ${
+                selectedMethod === method ? 'border-blue-500' : ''
+              }`}
+              onClick={() => setSelectedMethod(method)}
+            >
+              <div className='flex-grow'>
+                <h3 className='text-lg font-semibold'>{method}</h3>
+                <p className='text-gray-600'>
+                  Metode {method} untuk pengambilan keputusan
+                </p>
+              </div>
+              {selectedMethod === method && (
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 24 24'
+                  fill='green'
+                  className='size-6'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className='w-3/5 mx-auto my-10'>
         <div className='flex justify-end space-x-4 my-4'>
           <button
-            className='bg-gray-400 text-white px-4 py-2 rounded'
+            className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
             onClick={() => {
               router.back();
             }}
@@ -112,11 +152,9 @@ export default function InputAlternativePage() {
           </button>
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
-            onClick={() => {
-              router.push('/proceses/2');
-            }}
+            onClick={() => {}}
           >
-            Review Process
+            Calculate
           </button>
         </div>
       </div>
