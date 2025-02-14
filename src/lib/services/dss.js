@@ -12,6 +12,27 @@ export const createDss = async (topicId, method) => {
   return dss;
 };
 
+export const getDss = async () => {
+  const dss = await prisma.dss.findMany({
+    select: {
+      dssId: true,
+      topic: {
+        select: {
+          name: true,
+          description: true,
+        },
+      },
+      creator: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  return dss;
+};
+
 export const getDetailDss = async (dssId) => {
   const dss = await prisma.dss.findUnique({
     select: {

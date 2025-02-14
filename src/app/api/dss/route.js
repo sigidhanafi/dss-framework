@@ -1,5 +1,22 @@
 import { NextResponse } from 'next/server';
-import { createDss } from '@/lib/services/dss';
+import { createDss, getDss } from '@/lib/services/dss';
+
+export async function GET() {
+  try {
+    const dss = await getDss();
+    return NextResponse.json({
+      status: 200,
+      message: 'Success fetch dss',
+      data: dss,
+    });
+  } catch (error) {
+    console.log('ER', error);
+    return NextResponse.json(
+      { message: 'Error fetching dss', detail: error },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(req) {
   const body = await req.json();
