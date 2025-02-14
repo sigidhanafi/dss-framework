@@ -70,6 +70,24 @@ export const createTopic = async (name, description) => {
   return topic;
 };
 
+export const getTopicCriterias = async (q) => {
+
+  const criterias = await prisma.criteria.findMany({
+      where: q,
+      select: {
+          criteriaId: true,
+          name: true,
+          description: true,
+          type: true,
+          weight: true,
+          parentCriteriaId: true
+      }
+  });
+
+  const criteriaTree = buildCriteriaTree(criterias);
+  return criteriaTree;
+};
+
 function buildCriteriaTree(criteriaList, parentId = null) {
   return criteriaList
     .filter(item => item.parentCriteriaId === parentId)

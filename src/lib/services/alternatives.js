@@ -55,3 +55,27 @@ export const deleteAlternative = async (alternativeId) => {
     
     return;
 };
+
+// NITIP DULU
+export const deleteDssAlternative = async (alternativeId, dssId) => {
+    console.log(alternativeId);
+    console.log(dssId);
+    const _ = await prisma.dssCriteriaAlternative.deleteMany({
+      where: { 
+        AND: [
+          { alternativeId: alternativeId },
+          { dssId: dssId },
+        ], 
+      },
+    });
+    const status = await prisma.dssAlternative.deleteMany({
+      where: {
+        AND: [
+          { alternativeId: alternativeId },
+          { dssId: dssId },
+        ],
+      }
+    });
+
+  return;
+};
