@@ -6,13 +6,25 @@ import React, { useState } from 'react';
 export default function AlternativeValue({
   criteria,
   alternatives,
+  criteriaAlternativeValue,
   showAction = true,
 }) {
   const [isShowFormCriteria, setIsShowFormCriteria] = useState(false);
   const router = useRouter();
 
-  const renderCriteria = (criteria, level = 0, alternatives) => {
-    return criteria.map((crit, index) => {
+  const updateAlternativeCriteriaValue = ({
+    criteriaId,
+    alternativeId,
+    dssId,
+    value,
+  }) => {};
+
+  const renderCriteria = (
+    criteriaAlternativeValue,
+    level = 0,
+    alternatives
+  ) => {
+    return criteriaAlternativeValue.map((crit, index) => {
       const spacerWidthClasses = [
         'w-0',
         'w-1/5',
@@ -25,28 +37,55 @@ export default function AlternativeValue({
       return (
         <React.Fragment key={index + level}>
           <tr key={index + level} className='bg-white text-gray-700'>
-            <td className='border border-gray-300 flex-grow'>
+            <td className='border border-blue-300 flex-grow'>
               <div className='flex flex-row items-center'>
                 <div
-                  className={`flex bg-gray-300 h-1 ${spacerWidthClasses[level]}`}
+                  className={`flex bg-gray-300 h-6 ${spacerWidthClasses[level]}`}
                 ></div>
                 <p className='px-4'>{crit.name}</p>
               </div>
             </td>
-            {alternatives.map((alternative) => {
+            {crit.alternatives.map((alternative) => {
               return (
                 <td
                   key={crit.name + alternative.name}
-                  className='border border-gray-300 px-4 py-2 flex-grow-0 text-center'
+                  className='border border-gray-300 px-4 py-2 w-40 text-center'
                 >
-                  -
+                  {crit.subCriteria && crit.subCriteria.length <= 0 ? (
+                    <input
+                      name='name'
+                      className='p-2 w-full text-center'
+                      placeholder='Enter value'
+                      defaultValue={alternative.value}
+                      onChange={(e) => {
+                        updateAlternativeCriteriaValue({
+                          criteriaId: '',
+                          alternativeId: '',
+                          dssId: '',
+                          value: e.target.value,
+                        });
+                      }}
+                      autoComplete='off'
+                      type='number'
+                    />
+                  ) : (
+                    <input
+                      name='name'
+                      className='p-2 w-full text-center'
+                      placeholder='-'
+                      defaultValue={alternative.value}
+                      disabled
+                      autoComplete='off'
+                      type='number'
+                    />
+                  )}
                 </td>
               );
             })}
           </tr>
-          {crit.subcriteria &&
-            crit.subcriteria.length > 0 &&
-            renderCriteria(crit.subcriteria, level + 1, alternatives)}
+          {crit.subCriteria &&
+            crit.subCriteria.length > 0 &&
+            renderCriteria(crit.subCriteria, level + 1, alternatives)}
         </React.Fragment>
       );
     });
@@ -75,7 +114,9 @@ export default function AlternativeValue({
                   })}
                 </tr>
               </thead>
-              <tbody>{renderCriteria(criteria, 0, alternatives)}</tbody>
+              <tbody>
+                {renderCriteria(criteriaAlternativeValue, 0, alternatives)}
+              </tbody>
             </table>
           </div>
           {showAction && (
