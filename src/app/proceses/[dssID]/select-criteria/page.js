@@ -32,23 +32,43 @@ export default function SelectCriteria() {
     }
   };
 
-  const fetchTopicDetail = async () => {
+  const fetchCriteriaByTopic = async () => {
     if (topic == null) {
       return;
     }
 
-    const response = await fetch('/api/topics/' + topic.topicId, {
-      method: 'GET',
+    const response = await fetch(
+      '/api/topics/' + topic.topicId + '/criterias',
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+
+    const responseJson = await response.json();
+    if (responseJson.status == 200) {
+      const criterias = responseJson.data;
+
+      setCriterias(criterias);
+    } else {
+      // handle error
+    }
+  };
+
+  const handleSelectCriteria = async () => {
+    const params = { name: formTopic.name, description: formTopic.description };
+    const response = await fetch('/api/topics', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
     });
 
     const responseJson = await response.json();
     if (responseJson.status == 200) {
-      const data = responseJson.data;
-
-      setCriterias(data.criterias);
+      setShowForm(false);
+      fetchTopics();
     } else {
-      // handle error
+      // show notif error
     }
   };
 
@@ -57,7 +77,7 @@ export default function SelectCriteria() {
   }, []);
 
   useEffect(() => {
-    fetchTopicDetail();
+    fetchCriteriaByTopic();
   }, [topic]);
 
   return (

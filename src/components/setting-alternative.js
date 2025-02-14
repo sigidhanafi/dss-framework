@@ -62,6 +62,7 @@ export default function SettingAlternative({
 
   const handleUpdateAlternative = async () => {
     const params = { ...formAlternative };
+    console.log('PATAM', params);
     const response = await fetch(
       '/api/alternatives/' + formAlternative.alternativeId,
       {
@@ -72,6 +73,8 @@ export default function SettingAlternative({
     );
 
     const responseJson = await response.json();
+
+    console.log('response', responseJson);
 
     if (responseJson.status == 200) {
       handleSuccessCRUD();

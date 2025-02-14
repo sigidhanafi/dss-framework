@@ -3,88 +3,66 @@
 import SettingAlternative from '@/components/setting-alternative';
 import SettingCriteria from '@/components/setting-criteria';
 import Stepper from '@/components/stepper';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 export default function ReviewAlternativePage() {
   const router = useRouter();
+  const { dssID } = useParams();
 
-  const criteria = [
-    {
-      name: 'Pengalaman',
-      desc: 'Lama bekerja dalam bidang terkait',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      subcriteria: [
-        {
-          name: '> 5 Tahun',
-          desc: 'Pengalaman lebih dari 5 tahun',
-          type: 'Benefit',
-          weight: 'Tinggi',
-          subcriteria: [
-            {
-              name: 'Sub Sub Criteria',
-              desc: 'Sub Sub Sub',
-              type: 'Benefit',
-              weight: 'Tinggi',
-            },
-          ],
-        },
-        {
-          name: '3-5 Tahun',
-          desc: 'Pengalaman antara 3 hingga 5 tahun',
-          type: 'Benefit',
-          weight: 'Sedang',
-        },
-        {
-          name: '< 3 Tahun',
-          desc: 'Pengalaman kurang dari 3 tahun',
-          type: 'Benefit',
-          weight: 'Rendah',
-        },
-      ],
-    },
-    {
-      name: 'Universitas',
-      desc: 'Asal universitas',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      subcriteria: [],
-    },
-    {
-      name: 'IPK',
-      desc: 'Indeks Prestasi Kumulatif akademik',
-      type: 'Benefit',
-      weight: 'Sedang',
-      subcriteria: [
-        {
-          name: '> 3.5',
-          desc: 'IPK lebih dari 3.5',
-          type: 'Benefit',
-          weight: 'Tinggi',
-        },
-        {
-          name: '3.0 - 3.5',
-          desc: 'IPK antara 3.0 dan 3.5',
-          type: 'Benefit',
-          weight: 'Sedang',
-        },
-        {
-          name: '< 3.0',
-          desc: 'IPK kurang dari 3.0',
-          type: 'Benefit',
-          weight: 'Rendah',
-        },
-      ],
-    },
-  ];
+  const [topic, setTopic] = useState(null);
+  const [alternatives, setAlternatives] = useState([]);
 
-  const alternatives = [
-    { name: 'Sigit', desc: '-' },
-    { name: 'Silmi', desc: '-' },
-    { name: 'Alfy', desc: '-' },
-    { name: 'Rafa', desc: '-' },
-  ];
+  const fetchDetailDss = async () => {
+    const response = await fetch('/api/dss/' + dssID, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const responseJson = await response.json();
+    console.log('responseJson', responseJson);
+    if (responseJson.status == 200) {
+      const data = responseJson.data;
+      // setTopic({ id: data.id, name: data.name, description: data.description });
+      // setCriterias(data.criterias);
+      // setAlternatives(data.alternatives);
+
+      setTopic({ name: data.topic.name, topicId: data.topic.topicId });
+    } else {
+      // handle error
+    }
+  };
+
+  const fetchAlternativeByTopic = async () => {
+    if (topic == null) {
+      return;
+    }
+
+    const response = await fetch(
+      '/api/topics/' + topic.topicId + '/alternatives',
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+
+    const responseJson = await response.json();
+    if (responseJson.status == 200) {
+      const data = responseJson.data;
+
+      setAlternatives(data);
+    } else {
+      // handle error
+    }
+  };
+
+  useEffect(() => {
+    fetchDetailDss();
+  }, []);
+
+  useEffect(() => {
+    fetchAlternativeByTopic();
+  }, [topic]);
 
   return (
     <>
@@ -97,12 +75,15 @@ export default function ReviewAlternativePage() {
       </div>
 
       <Stepper step={2} />
-
-      <SettingAlternative
-        title={'Alternatives'}
-        alternatives={alternatives}
-        action={'process'}
-      />
+      {alternatives && topic && (
+        <SettingAlternative
+          title={'Alternatives'}
+          alternatives={alternatives}
+          action={'process'}
+          topicId={topic.topicId}
+          refetchTrigger={fetchAlternativeByTopic}
+        />
+      )}
 
       <div className='w-3/5 mx-auto'>
         <div className='flex justify-end space-x-4 my-4'>
