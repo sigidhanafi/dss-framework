@@ -1,4 +1,4 @@
-import { DssMethodType } from '@prisma/client';
+import { CriteriaType, DssMethodType } from '@prisma/client';
 import prisma from '../prisma';
 import { buildCriteriaTree } from './topics.js';
 
@@ -160,9 +160,6 @@ export const getDssResult = async (dssId) => {
 };
 
 export const calculateDss = async (dssId, method) => {
-  // const _ = await prisma.dssAlternative.createMany({
-  //     data: data
-  // });
 
   const dss = await prisma.dss.findUnique({
     where: { dssId: dssId },
@@ -204,111 +201,111 @@ export const calculateDss = async (dssId, method) => {
     },
   });
 
-  // get criteria
-  let criterias = dss.dssCriterias.flatMap(Object.values);
+    let criterias = dss.dssCriterias.flatMap(Object.values);   
+    const weightedCriteria = calculateFinalWeights(criterias);
+    const weightMap = Object.fromEntries(
+        weightedCriteria.map((c) => [c.criteriaId, c.finalWeight])
+      );
+    let alternatives = dss.dssCriteriaAlternatives
 
-  // calculate total or final wight (to be use when normalize weight)
-  const weightedCriteria = calculateFinalWeights(criterias);
+    alternatives = Object.values(alternatives.reduce((acc, { alternative, criteria, value }) => {
+        const { alternativeId, name } = alternative;
+        if (!acc[alternativeId]) {
+          acc[alternativeId] = { alternativeId, name, values: {} };
+        }
+        acc[alternativeId].values[criteria.criteriaId] = value;
+        return acc;
+      }, {}));   
 
-  const weightMap = Object.fromEntries(
-    weightedCriteria.map((c) => [c.criteriaId, c.finalWeight])
-  );
 
-  let alternatives = dss.dssCriteriaAlternatives;
+    let methodResult = []
 
-  alternatives = Object.values(
-    alternatives.reduce((acc, { alternative, criteria, value }) => {
-      const { alternativeId, name } = alternative;
-      if (!acc[alternativeId]) {
-        acc[alternativeId] = { alternativeId, name, values: {} };
-      }
-      acc[alternativeId].values[criteria.criteriaId] = value;
-      return acc;
-    }, {})
-  );
+    if (method == DssMethodType.WP) {
+        methodResult = Object.entries(calculateWP(weightMap, alternatives, criterias))   
+    } else if (method == DssMethodType.SAW) {
+        const normalizedAlternatives = normalizeAlternatives(criterias, alternatives);
+        methodResult = Object.entries(calculateSAW(weightMap, normalizedAlternatives, criterias))   
+    } else if (method == DssMethodType.TOPSIS) {
+        // METODE TOPSIS
+    };
+    const ranking = methodResult
+            .map(([alternativeId, score]) => ({ alternativeId: Number(alternativeId), score })) 
+            .sort((a, b) => b.score - a.score)
+            .map((item, index) => ({ ...item, ranking: index + 1 }));   
+    
+    console.log(ranking)
+    await saveDssScore(dssId, ranking);
+    return;
+};
 
-  let ranking = [];
+function normalizeAlternatives(criteria, alternatives) {
+    let minMaxValues = {};
 
-  if (method == DssMethodType.WP) {
-    ranking = Object.entries(calculateWP(weightMap, alternatives, criterias))
-      .map(([alternativeId, score]) => ({
-        alternativeId: Number(alternativeId),
-        score,
-      }))
-      .sort((a, b) => b.score - a.score)
-      .map((item, index) => ({ ...item, ranking: index + 1 }));
-  } else if (method == DssMethodType.SAW) {
-    // METODE SAW
-  } else if (method == DssMethodType.TOPSIS) {
-    // METODE TOPSIS
+    // Cari nilai min/max sesuai tipe criteria
+    criteria.forEach((criterion) => {
+        let values = alternatives
+            .map((alt) => alt.values[criterion.criteriaId])
+            .filter((v) => v !== undefined); // Hapus undefined
+
+        let min = values.length > 0 ? Math.min(...values) : 0;
+        let max = values.length > 0 ? Math.max(...values) : 0;
+
+        minMaxValues[criterion.criteriaId] = criterion.type === "BENEFIT" ? max : min;
+    });
+
+    // Update nilai di alternatives sesuai dengan min/max yang udah dicari
+    alternatives.forEach((alt) => {
+        Object.keys(alt.values).forEach((key) => {
+            let criteriaId = Number(key); // Key dalam object values itu string, convert ke number
+            let normalizer = minMaxValues[criteriaId] || 1; // Pakai 1 biar nggak bagi 0
+
+            if (normalizer !== 0) {
+                alt.values[criteriaId] = alt.values[criteriaId] / normalizer;
+            }
+        });
+    });
+
+    return alternatives;
+}
+
+function calculateFinalWeights(criteria, parentId = null) {
+    const filtered = criteria.filter((c) => c.parentCriteriaId === parentId);
+    const totalWeight = filtered.reduce((sum, c) => sum + c.weight, 0);
+    
+    return filtered.flatMap((c) => {
+        const finalWeight = parseFloat((c.weight * (1 / (totalWeight || 1))).toFixed(3));
+        // const finalWeight = parentId ? c.weight * (1 / totalWeight) : c.weight;
+        return [{ ...c, finalWeight }, ...calculateFinalWeights(criteria, c.criteriaId)];
+    });
   }
 
   await saveDssScore(dssId, ranking);
   return;
 };
 
-function calculateFinalWeights(criteria, parentId = null) {
-  // get total weight per parentId
-  const filtered = criteria.filter((c) => c.parentCriteriaId === parentId);
-  const totalWeight = filtered.reduce((sum, c) => sum + c.weight, 0);
-
-  return filtered.flatMap((c) => {
-    const finalWeight = parseFloat(
-      (c.weight * (1 / (totalWeight || 1))).toFixed(3)
-    );
-
-    // add total weight in every criteria
-    return [
-      { ...c, finalWeight },
-      ...calculateFinalWeights(criteria, c.criteriaId),
-    ];
-  });
-}
-
-function calculateWP(
-  weightMap,
-  alternatives,
-  criteria,
-  parentCriteriaId = null
-) {
-  // console.log("PARENTID: ", parentCriteriaId)
-  const filteredCriteria = criteria.filter(
-    (c) => c.parentCriteriaId === parentCriteriaId
-  );
-  // console.log("filteredCriteria: ", filteredCriteria)
-  if (filteredCriteria.length === 0) return {}; // Base case
-
-  let scores = {};
-
-  filteredCriteria.forEach((criterion) => {
-    const subScores = calculateWP(
-      weightMap,
-      alternatives,
-      criteria,
-      criterion.criteriaId
-    );
+function calculateSAW(weightMap, alternatives, criteria, parentCriteriaId = null) {
+    console.log("PARENTID: ", parentCriteriaId)
+    const filteredCriteria = criteria.filter((c) => c.parentCriteriaId === parentCriteriaId);
+    console.log("filteredCriteria: ", filteredCriteria)
+    if (filteredCriteria.length === 0) return {}; // Base case
+    let scores = {};
+      
+    filteredCriteria.forEach((criterion) => {
+      const subScores = calculateSAW(weightMap, alternatives, criteria, criterion.criteriaId);
     //   console.log("subscore:", subScores);
-    alternatives.forEach((alt) => {
-      // console.log(Object.keys(subScores).length > 0);
-      // console.log("subscore dalam alt: ", subScores);
-      const subScore =
-        Object.keys(subScores).length > 0
-          ? Math.pow(
-              subScores[alt.alternativeId],
-              weightMap[criterion.criteriaId]
-            )
-          : Math.pow(
-              alt.values[criterion.criteriaId] || 1,
-              weightMap[criterion.criteriaId] || 0
-            );
+      alternatives.forEach((alt) => {
+        // console.log(Object.keys(subScores).length > 0);
+        // console.log("subscore dalam alt: ", subScores);
+        const subScore = Object.keys(subScores).length > 0
+        ? subScores[alt.alternativeId] * weightMap[criterion.criteriaId] // SAW pakai tambah, bukan kali
+        : (alt.values[criterion.criteriaId] || 0) * weightMap[criterion.criteriaId];
+        
+        // console.log("scores di criteria %s dan alt %d adalah: %d", criterion.criteriaId, alt.alternativeId, subScore )
 
-      // console.log("scores di criteria %s dan alt %d adalah: %d", criterion.criteriaId, alt.alternativeId, subScore )
-
-      scores[alt.alternativeId] = (scores[alt.alternativeId] || 1) * subScore;
+        scores[alt.alternativeId] = (scores[alt.alternativeId] || 0) + subScore;
+      });
     });
-  });
-
-  // console.log("scores: ",scores)
-  // console.log("FINISH PARENTID: ", parentCriteriaId)
-  return scores;
-}
+    // console.log("scores: ",scores)
+    // console.log("FINISH PARENTID: ", parentCriteriaId)
+    return scores;
+};
