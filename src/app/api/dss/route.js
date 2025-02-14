@@ -10,7 +10,6 @@ export async function GET() {
       data: dss,
     });
   } catch (error) {
-    console.log('ER', error);
     return NextResponse.json(
       { message: 'Error fetching dss', detail: error },
       { status: 500 }
@@ -36,6 +35,7 @@ export async function POST(req) {
       );
     }
   };
+
 
 /*
 --> POST {url}/api/dss

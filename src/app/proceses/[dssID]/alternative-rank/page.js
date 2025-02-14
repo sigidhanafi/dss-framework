@@ -11,13 +11,6 @@ export default function AlternativeRankPage() {
   const [topic, setTopic] = useState();
   const [dssAlternatives, setDssAlternatives] = useState([]);
 
-  // const alternatives = [
-  //   { name: 'Sigit', score: '90.78', rank: '1' },
-  //   { name: 'Silmi', score: '80.78', rank: '2' },
-  //   { name: 'Alfy', score: '70.78', rank: '3' },
-  //   { name: 'Rafa', score: '60.78', rank: '4' },
-  // ];
-
   const fetchDetailDss = async () => {
     const response = await fetch('/api/dss/' + dssID, {
       method: 'GET',
@@ -71,7 +64,9 @@ export default function AlternativeRankPage() {
                   <td className='border border-gray-300 p-2'>
                     {item.alternative.name}
                   </td>
-                  <td className='border border-gray-300 p-2'>{item.sValue}</td>
+                  <td className='border border-gray-300 p-2'>
+                    {item.sValue.toFixed(3)}
+                  </td>
                   <td className='border border-gray-300 p-2'>
                     {item.rankValue}
                   </td>

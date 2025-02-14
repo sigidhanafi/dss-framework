@@ -12,6 +12,7 @@ export default function DssDetailPage() {
   const [topic, setTopic] = useState(null);
   const [dssAlternatives, setDssAlternatives] = useState([]);
   const [dssCriterias, setDssCriterias] = useState([]);
+  const [dssCriteriaAlternatives, setDssCriteriaAlternatives] = useState([]);
   const [selectedMethod, setSelectedMethod] = useState();
   const [criteriaParams, setCriteriaParams] = useState([]);
 
@@ -56,6 +57,8 @@ export default function DssDetailPage() {
       );
       setDssCriterias(dssCriterias);
 
+      setDssCriteriaAlternatives(data.dssCriteriaAlternatives);
+
       setTopic({
         name: data.topic.name,
         topicId: data.topic.topicId,
@@ -92,7 +95,9 @@ export default function DssDetailPage() {
       <AlternativeValue
         alternatives={dssAlternatives}
         criteriaAlternativeValue={dssCriterias}
+        dssCriteriaAlternatives={dssCriteriaAlternatives}
         updateParamToParent={(params) => {}}
+        action={'view'}
       />
 
       {/* Method Selection Section */}
@@ -140,7 +145,9 @@ export default function DssDetailPage() {
                 <td className='border border-gray-300 p-2'>
                   {item.alternative.name}
                 </td>
-                <td className='border border-gray-300 p-2'>{item.sValue}</td>
+                <td className='border border-gray-300 p-2'>
+                  {item.sValue && item.sValue.toFixed(3)}
+                </td>
                 <td className='border border-gray-300 p-2'>{item.rankValue}</td>
               </tr>
             ))}
