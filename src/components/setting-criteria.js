@@ -313,7 +313,7 @@ export default function SettingCriteria({
                     colSpan={action != 'none' ? 5 : 4}
                   >
                     <p className='text-gray-500'>
-                      No criteria available. Click "Manage".{' '}
+                      No criteria available. Click Manage.{' '}
                       <button
                         className='text-blue-400 py-2'
                         onClick={() => {
