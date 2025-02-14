@@ -1,23 +1,66 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 export default function AlternativeValue({
-  criteria,
   alternatives,
   criteriaAlternativeValue,
+  dssID,
   showAction = true,
+  updateParamToParent,
 }) {
-  const [isShowFormCriteria, setIsShowFormCriteria] = useState(false);
   const router = useRouter();
 
-  const updateAlternativeCriteriaValue = ({
+  const [paramCalculation, setParamCalculation] = useState([]);
+
+  const updateAlternativeCriteriaValue = async ({
     criteriaId,
     alternativeId,
-    dssId,
     value,
-  }) => {};
+  }) => {
+    const updatedParams = paramCalculation.map((item) => {
+      if (
+        item.criteriaId === criteriaId &&
+        item.alternativeId === alternativeId
+      ) {
+        return { ...item, value: Number(value) };
+      }
+      return item;
+    });
+
+    setParamCalculation(updatedParams);
+  };
+
+  const flattenParams = (criterias) => {
+    let params = [];
+
+    criterias.forEach((criteria) => {
+      alternatives.forEach((alternative) => {
+        const param = {
+          criteriaId: criteria.criteriaId,
+          alternativeId: alternative.alternative.alternativeId,
+          value: 0,
+        };
+        params.push(param);
+      });
+
+      if (criteria.subCriteria && criteria.subCriteria.length > 0) {
+        params = params.concat(flattenParams(criteria.subCriteria));
+      }
+    });
+
+    return params;
+  };
+
+  useEffect(() => {
+    const params = flattenParams(criteriaAlternativeValue);
+    setParamCalculation(params);
+  }, [criteriaAlternativeValue]);
+
+  useEffect(() => {
+    updateParamToParent(paramCalculation);
+  }, [paramCalculation]);
 
   const renderCriteria = (
     criteriaAlternativeValue,
@@ -48,7 +91,7 @@ export default function AlternativeValue({
             {crit.alternatives.map((alternative) => {
               return (
                 <td
-                  key={crit.name + alternative.name}
+                  key={crit.name + alternative.alternative.name}
                   className='border border-gray-300 px-4 py-2 w-40 text-center'
                 >
                   {crit.subCriteria && crit.subCriteria.length <= 0 ? (
@@ -59,9 +102,8 @@ export default function AlternativeValue({
                       defaultValue={alternative.value}
                       onChange={(e) => {
                         updateAlternativeCriteriaValue({
-                          criteriaId: '',
-                          alternativeId: '',
-                          dssId: '',
+                          criteriaId: crit.criteriaId,
+                          alternativeId: alternative.alternative.alternativeId,
                           value: e.target.value,
                         });
                       }}
@@ -105,10 +147,10 @@ export default function AlternativeValue({
                   {alternatives.map((item) => {
                     return (
                       <th
-                        key={item.name}
+                        key={item.alternative.name}
                         className='border border-gray-300 px-4 py-2'
                       >
-                        {item.name}
+                        {item.alternative.name}
                       </th>
                     );
                   })}

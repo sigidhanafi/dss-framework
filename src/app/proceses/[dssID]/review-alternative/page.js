@@ -12,6 +12,7 @@ export default function ReviewAlternativePage() {
 
   const [topic, setTopic] = useState(null);
   const [alternatives, setAlternatives] = useState([]);
+  const [dssAlternatives, setDssAlternatives] = useState([]);
 
   const fetchDetailDss = async () => {
     const response = await fetch('/api/dss/' + dssID, {
@@ -25,6 +26,10 @@ export default function ReviewAlternativePage() {
       // setTopic({ id: data.id, name: data.name, description: data.description });
       // setCriterias(data.criterias);
       // setAlternatives(data.alternatives);
+
+      setDssAlternatives(
+        data.dssAlternatives.map((item) => item.alternative.alternativeId)
+      );
       setTopic({
         name: data.topic.name,
         topicId: data.topic.topicId,
@@ -77,10 +82,12 @@ export default function ReviewAlternativePage() {
       </div>
 
       <Stepper step={2} />
+
       {alternatives && topic && (
         <SettingAlternative
           title={'Alternatives'}
           alternatives={alternatives}
+          dssAlternatives={dssAlternatives}
           action={'process'}
           topicId={topic.topicId}
           refetchTrigger={fetchAlternativeByTopic}

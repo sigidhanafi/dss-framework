@@ -2,17 +2,18 @@
 
 import { useState } from 'react';
 import Modal from './modal';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function SettingAlternative({
   title,
   alternatives,
-  criteria,
+  dssAlternatives,
   topicId,
   action,
   refetchTrigger,
 }) {
   const route = useRouter();
+  const { dssID } = useParams();
 
   const [showFormAlternative, setShowFormAlternative] = useState(false);
   const [formAlternative, setFormAlternative] = useState({
@@ -74,8 +75,6 @@ export default function SettingAlternative({
 
     const responseJson = await response.json();
 
-    console.log('response', responseJson);
-
     if (responseJson.status == 200) {
       handleSuccessCRUD();
     } else {
@@ -97,12 +96,34 @@ export default function SettingAlternative({
     }
   };
 
+  const handleSelectAlternative = async (alternativeId) => {
+    const params = { alternativeId };
+    const response = await fetch('/api/dss/' + dssID + '/alternatives', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+  };
+
+  const handleRemoveAlternative = async (alternativeId) => {
+    const params = { alternativeId };
+    const response = await fetch('/api/dss/' + dssID + '/alternatives', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+  };
+
   return (
     <>
       <div className='w-3/5 mx-auto my-10'>
         <div className='flex justify-between my-2'>
           <h2 className='text-xl font-semibold mb-4'>{title}</h2>
-          {(action == 'setting' || action == 'process') && (
+          {action == 'setting' && (
             <div className='flex justify-end'>
               <button
                 className='flex border-blue-300 border text-blue-400 px-4 py-2 rounded-lg'
@@ -144,6 +165,9 @@ export default function SettingAlternative({
               {alternatives &&
                 alternatives.length > 0 &&
                 alternatives.map((alternative) => {
+                  const defaultChecked = dssAlternatives.includes(
+                    alternative.alternativeId
+                  );
                   return (
                     <tr
                       key={alternative.name}
@@ -155,7 +179,7 @@ export default function SettingAlternative({
                       <td className='border border-gray-300 px-4 py-2'>
                         {alternative.description}
                       </td>
-                      {action != 'none' && (
+                      {action == 'setting' && (
                         <td className='border border-gray-300'>
                           <div className='flex px-4 py-2 text-center justify-center space-x-4'>
                             {/* edit alternative */}
@@ -204,6 +228,32 @@ export default function SettingAlternative({
                                 />
                               </svg>
                             </button>
+                          </div>
+                        </td>
+                      )}
+
+                      {action == 'process' && (
+                        <td className='border border-gray-300'>
+                          <div className='flex px-4 py-2 text-center justify-center space-x-4'>
+                            <label className='relative inline-flex items-center cursor-pointer'>
+                              <input
+                                type='checkbox'
+                                defaultChecked={defaultChecked}
+                                onChange={(e) => {
+                                  if (e.target.checked == true) {
+                                    handleSelectAlternative(
+                                      Number(alternative.alternativeId)
+                                    );
+                                  } else {
+                                    handleRemoveAlternative(
+                                      Number(alternative.alternativeId)
+                                    );
+                                  }
+                                }}
+                                className='sr-only peer'
+                              />
+                              <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
                           </div>
                         </td>
                       )}

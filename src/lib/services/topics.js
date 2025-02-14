@@ -88,7 +88,7 @@ export const getTopicCriterias = async (q) => {
   return criteriaTree;
 };
 
-function buildCriteriaTree(criteriaList, parentId = null) {
+export function buildCriteriaTree(criteriaList, parentId = null) {
   return criteriaList
     .filter((item) => item.parentCriteriaId === parentId)
     .map((item) => ({

@@ -32,12 +32,6 @@ export async function POST(req, { params }) {
     }));
     await addCriterias(criteriaWithDssId);
 
-    let dssResultWithDssId = dssResult.map((res) => ({
-      ...res,
-      dssId: parseInt(id),
-    }));
-    await saveDssResult(dssResultWithDssId);
-
     return NextResponse.json({
       status: 200,
       message: 'Success save dss result',

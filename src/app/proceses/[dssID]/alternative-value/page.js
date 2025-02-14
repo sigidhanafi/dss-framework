@@ -12,13 +12,29 @@ export default function AlternativeValuePage() {
   const { dssID } = useParams();
 
   const [topic, setTopic] = useState(null);
-  const [alternatives, setAlternatives] = useState([
-    { name: 'Sigit', value: '' },
-    { name: 'Silmi', value: '' },
-    { name: 'Alfy', value: '' },
-    { name: 'Rafa', value: '' },
-  ]);
+  const [dssAlternatives, setDssAlternatives] = useState([]);
+  const [dssCriterias, setDssCriterias] = useState([]);
   const [selectedMethod, setSelectedMethod] = useState();
+  const [criteriaParams, setCriteriaParams] = useState([]);
+
+  const constructCriteriaAndAlternativeData = (criterias, alternatives) => {
+    return criterias.map((criteria) => {
+      // If subCriteria exists, modify it recursively
+      if (criteria.subCriteria && criteria.subCriteria.length > 0) {
+        criteria.subCriteria = constructCriteriaAndAlternativeData(
+          criteria.subCriteria,
+          alternatives
+        );
+      }
+
+      // Add new data to the subCriteria array
+      if (criteria.subCriteria) {
+        criteria = { ...criteria, alternatives: alternatives };
+      }
+
+      return criteria;
+    });
+  };
 
   const fetchDetailDss = async () => {
     const response = await fetch('/api/dss/' + dssID, {
@@ -30,11 +46,16 @@ export default function AlternativeValuePage() {
 
     if (responseJson.status == 200) {
       const data = responseJson.data;
-      // setTopic({ id: data.id, name: data.name, description: data.description });
-      // setCriterias(data.criterias);
-      // setAlternatives(data.alternatives);
+      setDssAlternatives(data.dssAlternatives);
 
       setSelectedMethod(data.method);
+
+      const dssCriterias = constructCriteriaAndAlternativeData(
+        data.dssCriterias,
+        data.dssAlternatives
+      );
+      setDssCriterias(dssCriterias);
+
       setTopic({
         name: data.topic.name,
         topicId: data.topic.topicId,
@@ -45,145 +66,18 @@ export default function AlternativeValuePage() {
     }
   };
 
+  const handleCalculate = () => {
+    const params = {
+      method: selectedMethod,
+      criterias: criteriaParams,
+    };
+
+    console.log(params);
+  };
+
   useEffect(() => {
     fetchDetailDss();
   }, []);
-
-  const criteriaAlternativeValue = [
-    {
-      name: 'Pengalaman',
-      desc: 'Lama bekerja dalam bidang terkait',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      alternatives: [
-        { name: 'Sigit', value: '' },
-        { name: 'Silmi', value: '' },
-        { name: 'Alfy', value: '' },
-        { name: 'Rafa', value: '' },
-      ],
-      subCriteria: [
-        {
-          name: '> 5 Tahun',
-          desc: 'Pengalaman lebih dari 5 tahun',
-          type: 'Benefit',
-          weight: 'Tinggi',
-          alternatives: [
-            { name: 'Sigit', value: '' },
-            { name: 'Silmi', value: '' },
-            { name: 'Alfy', value: '' },
-            { name: 'Rafa', value: '' },
-          ],
-          subCriteria: [
-            {
-              name: 'Sub Sub Criteria',
-              desc: 'Sub Sub Sub',
-              type: 'Benefit',
-              weight: 'Tinggi',
-              alternatives: [
-                { name: 'Sigit', value: '' },
-                { name: 'Silmi', value: '' },
-                { name: 'Alfy', value: '' },
-                { name: 'Rafa', value: '' },
-              ],
-              subCriteria: [],
-            },
-          ],
-        },
-        {
-          name: '3-5 Tahun',
-          desc: 'Pengalaman antara 3 hingga 5 tahun',
-          type: 'Benefit',
-          weight: 'Sedang',
-          alternatives: [
-            { name: 'Sigit', value: '' },
-            { name: 'Silmi', value: '' },
-            { name: 'Alfy', value: '' },
-            { name: 'Rafa', value: '' },
-          ],
-          subCriteria: [],
-        },
-        {
-          name: '< 3 Tahun',
-          desc: 'Pengalaman kurang dari 3 tahun',
-          type: 'Benefit',
-          weight: 'Rendah',
-          alternatives: [
-            { name: 'Sigit', value: '' },
-            { name: 'Silmi', value: '' },
-            { name: 'Alfy', value: '' },
-            { name: 'Rafa', value: '' },
-          ],
-          subCriteria: [],
-        },
-      ],
-    },
-    {
-      name: 'Universitas',
-      desc: 'Asal universitas',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      alternatives: [
-        { name: 'Sigit', value: '' },
-        { name: 'Silmi', value: '' },
-        { name: 'Alfy', value: '' },
-        { name: 'Rafa', value: '' },
-      ],
-      subCriteria: [],
-    },
-    {
-      name: 'IPK',
-      desc: 'Indeks Prestasi Kumulatif akademik',
-      type: 'Benefit',
-      weight: 'Sedang',
-      alternatives: [
-        { name: 'Sigit', value: '' },
-        { name: 'Silmi', value: '' },
-        { name: 'Alfy', value: '' },
-        { name: 'Rafa', value: '' },
-      ],
-      subCriteria: [
-        {
-          name: '> 3.5',
-          desc: 'IPK lebih dari 3.5',
-          type: 'Benefit',
-          weight: 'Tinggi',
-          alternatives: [
-            { name: 'Sigit', value: '' },
-            { name: 'Silmi', value: '' },
-            { name: 'Alfy', value: '' },
-            { name: 'Rafa', value: '' },
-          ],
-          subCriteria: [],
-        },
-        {
-          name: '3.0 - 3.5',
-          desc: 'IPK antara 3.0 dan 3.5',
-          type: 'Benefit',
-          weight: 'Sedang',
-          alternatives: [
-            { name: 'Sigit', value: '' },
-            { name: 'Silmi', value: '' },
-            { name: 'Alfy', value: '' },
-            { name: 'Rafa', value: '' },
-          ],
-          subCriteria: [],
-        },
-        {
-          name: '< 3.0',
-          desc: 'IPK kurang dari 3.0',
-          type: 'Benefit',
-          weight: 'Rendah',
-          alternatives: [
-            { name: 'Sigit', value: '' },
-            { name: 'Silmi', value: '' },
-            { name: 'Alfy', value: '' },
-            { name: 'Rafa', value: '' },
-          ],
-          subCriteria: [],
-        },
-      ],
-    },
-  ];
 
   return (
     <>
@@ -198,9 +92,13 @@ export default function AlternativeValuePage() {
       <Stepper step={3} />
 
       <AlternativeValue
-        alternatives={alternatives}
+        alternatives={dssAlternatives}
         showAction={false}
-        criteriaAlternativeValue={criteriaAlternativeValue}
+        criteriaAlternativeValue={dssCriterias}
+        dssID={dssID}
+        updateParamToParent={(params) => {
+          setCriteriaParams(params);
+        }}
       />
 
       {/* Method Selection Section */}
@@ -252,7 +150,8 @@ export default function AlternativeValuePage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              router.replace('/proceses/' + dssID + '/alternative-rank');
+              // router.replace('/proceses/' + dssID + '/alternative-rank');
+              handleCalculate();
             }}
           >
             Calculate

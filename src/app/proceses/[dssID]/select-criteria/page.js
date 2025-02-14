@@ -11,8 +11,22 @@ export default function SelectCriteria() {
 
   const [topic, setTopic] = useState(null);
   const [criterias, setCriterias] = useState([]);
+  const [dssCriterias, setDssCriterias] = useState([]);
 
   const step = 1;
+
+  const flattenCriteriaIds = (criterias) => {
+    let ids = [];
+
+    criterias.forEach((criteria) => {
+      ids.push(criteria.criteriaId);
+      if (criteria.subCriteria && criteria.subCriteria.length > 0) {
+        ids = ids.concat(flattenCriteriaIds(criteria.subCriteria));
+      }
+    });
+
+    return ids;
+  };
 
   const fetchDetailDss = async () => {
     const response = await fetch('/api/dss/' + dssID, {
@@ -24,9 +38,9 @@ export default function SelectCriteria() {
     console.log('responseJson', responseJson);
     if (responseJson.status == 200) {
       const data = responseJson.data;
-      // setTopic({ id: data.id, name: data.name, description: data.description });
-      // setCriterias(data.criterias);
-      // setAlternatives(data.alternatives);
+
+      const dssCriteriaId = flattenCriteriaIds(data.dssCriterias);
+      setDssCriterias(dssCriteriaId);
 
       setTopic({
         name: data.topic.name,
@@ -61,23 +75,6 @@ export default function SelectCriteria() {
     }
   };
 
-  const handleSelectCriteria = async () => {
-    const params = { name: formTopic.name, description: formTopic.description };
-    const response = await fetch('/api/topics', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(params),
-    });
-
-    const responseJson = await response.json();
-    if (responseJson.status == 200) {
-      setShowForm(false);
-      fetchTopics();
-    } else {
-      // show notif error
-    }
-  };
-
   useEffect(() => {
     fetchDetailDss();
   }, []);
@@ -100,8 +97,10 @@ export default function SelectCriteria() {
         <SettingCriteria
           title={'Setting Criteria'}
           criteria={criterias}
+          dssCriterias={dssCriterias}
           action={'process'}
           topicId={topic.topicId}
+          dssID={dssID}
         />
       )}
 
