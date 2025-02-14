@@ -98,7 +98,7 @@ export default function TopicPage() {
               {topics.map((item) => {
                 return (
                   <Link key={item.id} href={'/topics/' + item.id}>
-                    <div className='bg-blue-200 p-4 rounded-lg'>
+                    <div className='border-blue-200 border p-4 rounded-lg'>
                       <p>{item.name}</p>
                       <span className='text-xs'>by {item.author}</span>
                     </div>

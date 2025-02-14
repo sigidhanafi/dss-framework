@@ -66,13 +66,25 @@ export default function AlternativeValuePage() {
     }
   };
 
-  const handleCalculate = () => {
+  const handleCalculate = async () => {
     const params = {
       method: selectedMethod,
       criterias: criteriaParams,
     };
 
-    router.push('/proceses/' + dssID + '/alternative-rank');
+    const response = await fetch('/api/dss/' + dssID, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      router.push('/proceses/' + dssID + '/alternative-rank');
+    } else {
+      // show notif error
+    }
   };
 
   useEffect(() => {
@@ -149,7 +161,6 @@ export default function AlternativeValuePage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              // router.replace('/proceses/' + dssID + '/alternative-rank');
               handleCalculate();
             }}
           >

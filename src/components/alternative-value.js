@@ -6,12 +6,23 @@ import React, { useEffect, useMemo, useState } from 'react';
 export default function AlternativeValue({
   alternatives,
   criteriaAlternativeValue,
-  showAction = true,
+  dssCriteriaAlternatives,
   updateParamToParent,
+  action,
 }) {
   const router = useRouter();
 
   const [paramCalculation, setParamCalculation] = useState([]);
+
+  const getValue = (dssCriteriaAlternatives, alternativeId, criteriaId) => {
+    const match = dssCriteriaAlternatives.find(
+      (item) =>
+        item.alternative.alternativeId === alternativeId &&
+        item.criteria.criteriaId === criteriaId
+    );
+
+    return match ? match.value : null; // Kembalikan null jika tidak ditemukan
+  };
 
   const updateAlternativeCriteriaValue = async ({
     criteriaId,
@@ -79,7 +90,7 @@ export default function AlternativeValue({
       return (
         <React.Fragment key={index + level}>
           <tr key={index + level} className='bg-white text-gray-700'>
-            <td className='border border-gray-300 flex-grow'>
+            <td className='border border-gray-300 flex-grow py-2'>
               <div className='flex flex-row items-center'>
                 <div
                   className={`flex bg-gray-300 h-6 ${spacerWidthClasses[level]}`}
@@ -93,33 +104,34 @@ export default function AlternativeValue({
                   key={crit.name + alternative.alternative.name}
                   className='border border-gray-300 px-4 py-2 w-40 text-center'
                 >
-                  {crit.subCriteria && crit.subCriteria.length <= 0 ? (
-                    <input
-                      name='name'
-                      className='p-2 w-full text-center'
-                      placeholder='Enter value'
-                      defaultValue={alternative.value}
-                      onChange={(e) => {
-                        updateAlternativeCriteriaValue({
-                          criteriaId: crit.criteriaId,
-                          alternativeId: alternative.alternative.alternativeId,
-                          value: e.target.value,
-                        });
-                      }}
-                      autoComplete='off'
-                      type='number'
-                    />
-                  ) : (
-                    <input
-                      name='name'
-                      className='p-2 w-full text-center'
-                      placeholder='-'
-                      defaultValue={alternative.value}
-                      disabled
-                      autoComplete='off'
-                      type='number'
-                    />
+                  {action == 'view' && (
+                    <>
+                      {getValue(
+                        dssCriteriaAlternatives,
+                        alternative.alternative.alternativeId,
+                        crit.criteriaId
+                      )}
+                    </>
                   )}
+                  {action != 'view' &&
+                    crit.subCriteria &&
+                    crit.subCriteria.length <= 0 && (
+                      <input
+                        name='name'
+                        className='p-2 w-full text-center'
+                        placeholder='Enter value'
+                        onChange={(e) => {
+                          updateAlternativeCriteriaValue({
+                            criteriaId: crit.criteriaId,
+                            alternativeId:
+                              alternative.alternative.alternativeId,
+                            value: e.target.value,
+                          });
+                        }}
+                        autoComplete='off'
+                        type='number'
+                      />
+                    )}
                 </td>
               );
             })}
