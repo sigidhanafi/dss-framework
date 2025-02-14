@@ -10,10 +10,89 @@ export default function SettingAlternative({
   criteria,
   topicId,
   action,
+  refetchTrigger,
 }) {
-  const [showNewAlternative, setShowNewAlternative] = useState(false);
-
   const route = useRouter();
+
+  const [showFormAlternative, setShowFormAlternative] = useState(false);
+  const [formAlternative, setFormAlternative] = useState({
+    name: '',
+    description: '',
+    alternativeId: null,
+    topicId: Number(topicId),
+  });
+
+  const handleResetForm = () => {
+    // reset form
+    setFormAlternative({
+      ...formAlternative,
+      name: '',
+      description: '',
+      alternativeId: null,
+    });
+  };
+
+  const handleSuccessCRUD = () => {
+    // reset form
+    handleResetForm();
+
+    // dismiss form
+    setShowFormAlternative(false);
+
+    // refetch trigger
+    refetchTrigger();
+  };
+
+  const handleCreateAlternative = async () => {
+    const params = { ...formAlternative };
+    const response = await fetch('/api/alternatives', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      handleSuccessCRUD();
+    } else {
+      // show notif error
+    }
+  };
+
+  const handleUpdateAlternative = async () => {
+    const params = { ...formAlternative };
+    const response = await fetch(
+      '/api/alternatives/' + formAlternative.alternativeId,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      }
+    );
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      handleSuccessCRUD();
+    } else {
+      // show notif error
+    }
+  };
+
+  const handleDeleteAlternative = async (alternativeId) => {
+    const response = await fetch('/api/alternatives/' + alternativeId, {
+      method: 'DELETE',
+    });
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      handleSuccessCRUD();
+    } else {
+      // show notif error
+    }
+  };
 
   return (
     <>
@@ -25,7 +104,7 @@ export default function SettingAlternative({
               <button
                 className='flex border-blue-300 border text-blue-400 px-4 py-2 rounded-lg'
                 onClick={() => {
-                  setShowNewAlternative(!showNewAlternative);
+                  setShowFormAlternative(true);
                 }}
               >
                 <svg
@@ -71,16 +150,22 @@ export default function SettingAlternative({
                         <p className='px-4'>{alternative.name}</p>
                       </td>
                       <td className='border border-gray-300 px-4 py-2'>
-                        {alternative.desc}
+                        {alternative.description}
                       </td>
                       {action != 'none' && (
                         <td className='border border-gray-300'>
                           <div className='flex px-4 py-2 text-center justify-center space-x-4'>
-                            {/* edit */}
+                            {/* edit alternative */}
                             <button
                               className='text-blue-400 hover:text-blue-500'
                               onClick={() => {
-                                setShowNewAlternative(true);
+                                setFormAlternative({
+                                  ...formAlternative,
+                                  name: alternative.name,
+                                  description: alternative.description,
+                                  alternativeId: alternative.alternativeId,
+                                });
+                                setShowFormAlternative(true);
                               }}
                             >
                               <svg
@@ -95,7 +180,14 @@ export default function SettingAlternative({
                             </button>
 
                             {/* Delete */}
-                            <button className='text-blue-400 hover:text-blue-500'>
+                            <button
+                              className='text-blue-400 hover:text-blue-500'
+                              onClick={() => {
+                                handleDeleteAlternative(
+                                  alternative.alternativeId
+                                );
+                              }}
+                            >
                               <svg
                                 xmlns='http://www.w3.org/2000/svg'
                                 viewBox='0 0 20 20'
@@ -143,11 +235,11 @@ export default function SettingAlternative({
       </div>
 
       {/* Modal Form */}
-      {showNewAlternative && (
+      {showFormAlternative && (
         <Modal
           title={'Create Alternative'}
           onCancel={() => {
-            setShowNewAlternative(false);
+            setShowFormAlternative(false);
           }}
         >
           {/* Form */}
@@ -157,9 +249,17 @@ export default function SettingAlternative({
                 Alternative Name
               </label>
               <input
-                type='text'
-                className='w-full p-2 border rounded-md'
-                placeholder='Enter alternative name'
+                name='name'
+                className='border p-2 w-full rounded-md'
+                placeholder='Enter name'
+                defaultValue={formAlternative.name}
+                onChange={(e) => {
+                  setFormAlternative({
+                    ...formAlternative,
+                    name: e.target.value,
+                  });
+                }}
+                autoComplete='off'
               />
             </div>
             <div>
@@ -167,15 +267,27 @@ export default function SettingAlternative({
                 Description
               </label>
               <textarea
+                name='description'
                 className='w-full p-2 border rounded-lg'
-                placeholder='Enter alternative description'
-              ></textarea>
+                placeholder='Enter description'
+                defaultValue={formAlternative.description}
+                onChange={(e) => {
+                  setFormAlternative({
+                    ...formAlternative,
+                    description: e.target.value,
+                  });
+                }}
+              />
             </div>
 
             {/* Submit Button */}
             <button
               onClick={() => {
-                setShowNewAlternative(false);
+                if (formAlternative.alternativeId == null) {
+                  handleCreateAlternative();
+                } else if (!isNaN(formAlternative.alternativeId)) {
+                  handleUpdateAlternative();
+                }
               }}
               className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
             >

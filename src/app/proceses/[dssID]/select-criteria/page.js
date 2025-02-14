@@ -2,10 +2,11 @@
 
 import SettingCriteria from '@/components/setting-criteria';
 import Stepper from '@/components/stepper';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 export default function SelectCriteria() {
+  const { id: topicId } = useParams();
   const criteria = [
     {
       name: 'Pengalaman',

@@ -146,6 +146,8 @@ export default function CriteriaUpdate() {
         title={'Manage Alternatives'}
         alternatives={alternatives}
         action={'setting'}
+        topicId={topicId}
+        refetchTrigger={fetchTopicDetail}
       />
 
       {/* Action */}
