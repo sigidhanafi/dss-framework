@@ -5,6 +5,7 @@ export const getTopics = async () => {
     select: {
       topicId: true,
       name: true,
+      description: true,
       creator: {
         select: {
           name: true,
@@ -16,6 +17,7 @@ export const getTopics = async () => {
   const aliasesTopicList = topics.map((topic) => ({
     id: topic.topicId,
     name: topic.name,
+    description: topic.description,
     author: topic.creator.name,
   }));
 

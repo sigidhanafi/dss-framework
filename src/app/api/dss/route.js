@@ -10,7 +10,6 @@ export async function GET() {
       data: dss,
     });
   } catch (error) {
-    console.log('ER', error);
     return NextResponse.json(
       { message: 'Error fetching dss', detail: error },
       { status: 500 }
@@ -19,22 +18,21 @@ export async function GET() {
 }
 
 export async function POST(req) {
-    const body = await req.json();
-    const { topicId } = body;
- 
-    try {
-      const dss = await createDss(topicId);
-      return NextResponse.json({
-        status: 200,
-        message: 'Success create dss',
-        data: { dssId: dss.dssId },
-      });
-    } catch (error) {
-      return NextResponse.json(
-        { message: 'Error create dss', detail: error },
-        { status: 500 }
-      );
-    }
+  const body = await req.json();
+  const { topicId } = body;
+
+  try {
+    const dss = await createDss(topicId);
+    return NextResponse.json({
+      status: 200,
+      message: 'Success create dss',
+      data: { dssId: dss.dssId },
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error create dss', detail: error },
+      { status: 500 }
+    );
   }
 }
 
