@@ -19,7 +19,7 @@ export default function Stepper({ step }) {
             {num === 1
               ? 'Choose Topic & Setting Criteria'
               : num === 2
-              ? 'Input Alternatives'
+              ? 'Review the Alternatives'
               : num === 3
               ? 'Review Process & Select Method'
               : 'Ranking Result'}

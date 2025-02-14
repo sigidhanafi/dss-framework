@@ -1,66 +1,71 @@
 import { NextResponse } from 'next/server';
-import { createDssCriteria, deleteDssCriteria, getDssCriteria } from '@/lib/services/criterias';
+import {
+  createDssCriteria,
+  deleteDssCriteria,
+  getDssCriteria,
+} from '@/lib/services/criterias';
 
 export async function POST(req, { params }) {
-    const { id } = await params;
-    const { criteriaId } = await req.json();
+  const { id } = await params;
+  const { criteriaId } = await req.json();
 
-    try {
-        const dssCriteria = await createDssCriteria({ 
-            dssId: parseInt(id),
-            criteriaId: criteriaId });
-        return NextResponse.json({
-            status: 200,
-            message: 'Success create dss criterias',
-            data: {
-                dssCriteriaId: dssCriteria.dssCriteriaId
-            },
-        });
-    } catch (error) {
-        return NextResponse.json(
-            { message: 'Error create dss criterias', detail: error },
-            { status: 500 }
-        );
-    }
+  try {
+    const dssCriteria = await createDssCriteria({
+      dssId: parseInt(id),
+      criteriaId: criteriaId,
+    });
+    return NextResponse.json({
+      status: 200,
+      message: 'Success create dss criterias',
+      data: {
+        dssCriteriaId: dssCriteria.dssCriteriaId,
+      },
+    });
+  } catch (error) {
+    console.log('ERR', error);
+    return NextResponse.json(
+      { message: 'Error create dss criterias', detail: error },
+      { status: 500 }
+    );
+  }
 }
 
 export async function GET(req, { params }) {
-    const { id } = await params;
+  const { id } = await params;
 
-    try {
-        const dssCriterias = await getDssCriteria({ dssId: parseInt(id) });
-        return NextResponse.json({
-            status: 200,
-            message: 'Success fetch dss criterias',
-            data: dssCriterias,
-        });
-    } catch (error) {
-        return NextResponse.json(
-            { message: 'Error fetch dss criterias', detail: error },
-            { status: 500 }
-        );
-    }
+  try {
+    const dssCriterias = await getDssCriteria({ dssId: parseInt(id) });
+    return NextResponse.json({
+      status: 200,
+      message: 'Success fetch dss criterias',
+      data: dssCriterias,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error fetch dss criterias', detail: error },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(req, { params }) {
-    const { id } = await params;
-    const { criteriaId } = await req.json();
+  const { id } = await params;
+  const { criteriaId } = await req.json();
 
-    try {
-        const _ = await deleteDssCriteria(parseInt(criteriaId), parseInt(id));
-        return NextResponse.json({
-            status: 200,
-            message: 'Success delete criteria',
-            data: {},
-        });
-    } catch (error) {
-        return NextResponse.json(
-            { message: 'Error delete criteria', detail: error },
-            { status: 500 }
-        );
-    }
+  try {
+    const _ = await deleteDssCriteria(parseInt(criteriaId), parseInt(id));
+    return NextResponse.json({
+      status: 200,
+      message: 'Success delete criteria',
+      data: {},
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error delete criteria', detail: error },
+      { status: 500 }
+    );
+  }
 }
-
 
 /*
 --> POST {url}/api/dss/:id_topic/criterias

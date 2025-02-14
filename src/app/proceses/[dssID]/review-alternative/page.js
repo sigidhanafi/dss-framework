@@ -1,32 +1,18 @@
 'use client';
 
+import SettingAlternative from '@/components/setting-alternative';
 import SettingCriteria from '@/components/setting-criteria';
 import Stepper from '@/components/stepper';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-export default function SelectCriteria() {
+export default function ReviewAlternativePage() {
   const router = useRouter();
   const { dssID } = useParams();
 
   const [topic, setTopic] = useState(null);
-  const [criterias, setCriterias] = useState([]);
-  const [dssCriterias, setDssCriterias] = useState([]);
-
-  const step = 1;
-
-  const flattenCriteriaIds = (criterias) => {
-    let ids = [];
-
-    criterias.forEach((criteria) => {
-      ids.push(criteria.criteriaId);
-      if (criteria.subCriteria && criteria.subCriteria.length > 0) {
-        ids = ids.concat(flattenCriteriaIds(criteria.subCriteria));
-      }
-    });
-
-    return ids;
-  };
+  const [alternatives, setAlternatives] = useState([]);
+  const [dssAlternatives, setDssAlternatives] = useState([]);
 
   const fetchDetailDss = async () => {
     const response = await fetch('/api/dss/' + dssID, {
@@ -35,13 +21,15 @@ export default function SelectCriteria() {
     });
 
     const responseJson = await response.json();
-    console.log('responseJson', responseJson);
     if (responseJson.status == 200) {
       const data = responseJson.data;
+      // setTopic({ id: data.id, name: data.name, description: data.description });
+      // setCriterias(data.criterias);
+      // setAlternatives(data.alternatives);
 
-      const dssCriteriaId = flattenCriteriaIds(data.dssCriterias);
-      setDssCriterias(dssCriteriaId);
-
+      setDssAlternatives(
+        data.dssAlternatives.map((item) => item.alternative.alternativeId)
+      );
       setTopic({
         name: data.topic.name,
         topicId: data.topic.topicId,
@@ -52,13 +40,13 @@ export default function SelectCriteria() {
     }
   };
 
-  const fetchCriteriaByTopic = async () => {
+  const fetchAlternativeByTopic = async () => {
     if (topic == null) {
       return;
     }
 
     const response = await fetch(
-      '/api/topics/' + topic.topicId + '/criterias',
+      '/api/topics/' + topic.topicId + '/alternatives',
       {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -67,9 +55,9 @@ export default function SelectCriteria() {
 
     const responseJson = await response.json();
     if (responseJson.status == 200) {
-      const criterias = responseJson.data;
+      const data = responseJson.data;
 
-      setCriterias(criterias);
+      setAlternatives(data);
     } else {
       // handle error
     }
@@ -80,27 +68,29 @@ export default function SelectCriteria() {
   }, []);
 
   useEffect(() => {
-    fetchCriteriaByTopic();
+    fetchAlternativeByTopic();
   }, [topic]);
 
   return (
     <>
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
-        <h1 className='text-3xl font-bold'>Topic: {topic && topic.name}</h1>
+        <h1 className='text-3xl font-bold'>
+          Review Alternatives: {topic && topic.name}
+        </h1>
         <p>{topic && topic.description}</p>
       </div>
 
-      <Stepper step={1} />
+      <Stepper step={2} />
 
-      {topic && criterias && (
-        <SettingCriteria
-          title={'Setting Criteria'}
-          criteria={criterias}
-          dssCriterias={dssCriterias}
+      {alternatives && topic && (
+        <SettingAlternative
+          title={'Alternatives'}
+          alternatives={alternatives}
+          dssAlternatives={dssAlternatives}
           action={'process'}
           topicId={topic.topicId}
-          dssID={dssID}
+          refetchTrigger={fetchAlternativeByTopic}
         />
       )}
 
@@ -117,10 +107,10 @@ export default function SelectCriteria() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              router.push('/proceses/' + dssID + '/review-alternative');
+              router.push('/proceses/' + dssID + '/alternative-value');
             }}
           >
-            Review Alternatives
+            Review Process
           </button>
         </div>
       </div>

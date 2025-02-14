@@ -36,8 +36,8 @@ export default function RootLayout({ children }) {
                 <Link href={'/topics'} className='hover:text-blue-500'>
                   Explore Topic
                 </Link>
-                <Link href='#' className='hover:text-blue-500'>
-                  How it Work
+                <Link href={'/histories'} className='hover:text-blue-500'>
+                  Histories
                 </Link>
                 <Link href='#' className='hover:text-blue-500'>
                   Login
