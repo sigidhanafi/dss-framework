@@ -35,8 +35,7 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-  }
-}
+  };
 
 /*
 --> POST {url}/api/dss
