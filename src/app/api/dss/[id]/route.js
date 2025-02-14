@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { addCriterias, getDetailDss, saveDssResult } from '@/lib/services/dss';
+import { addCriterias, calculateDss, getDetailDss, getDssResult, updateDss, updateDssMethod } from '@/lib/services/dss';
 
 export async function GET(req, { params }) {
   const { id } = await params;
@@ -21,21 +21,25 @@ export async function GET(req, { params }) {
 
 export async function POST(req, { params }) {
   const { id } = await params;
-
   const body = await req.json();
-  const { criterias, dssResult } = body;
-
+  const { method, criterias } = body;  
+    
   try {
+    const _ = await updateDssMethod(parseInt(id), method);
+   
     let criteriaWithDssId = criterias.map((criteria) => ({
       ...criteria,
       dssId: parseInt(id),
     }));
     await addCriterias(criteriaWithDssId);
 
+    await calculateDss(parseInt(id), method);
+    const result = await getDssResult(parseInt(id));
+
     return NextResponse.json({
       status: 200,
       message: 'Success save dss result',
-      data: {},
+      data: result,
     });
   } catch (error) {
     return NextResponse.json(
@@ -43,25 +47,21 @@ export async function POST(req, { params }) {
       { status: 500 }
     );
   }
-}
+};
 
 /*
 --> POST {url}/api/dss/:id_dss
 --> SAVE DSS VALUES AND RESULT
 REQ BODY
 {
+    "method": "WP",
     "criterias": [
         {
             "criteriaId": 1,
             "alternativeId": 2,
             "value": 20
         }
-    ],
-    "dssResult": [{
-        "alternativeId": 2,
-        "sValue": 2,
-        "rankValue": 3
-    }]
+    ]
 }
 
 RES BODY
@@ -89,13 +89,33 @@ RES BODY
         },
         "dssAlternatives": [
             {
-                "dssAlternativeId": 5,
+                "dssAlternativeId": 6,
                 "alternative": {
                     "alternativeId": 1,
                     "name": "Nasi Padang"
                 },
-                "rankValue": 3,
-                "sValue": 2
+                "rankValue": null,
+                "sValue": null
+            },
+            {
+                "dssAlternativeId": 7,
+                "alternative": {
+                    "alternativeId": 1,
+                    "name": "Nasi Padang"
+                },
+                "rankValue": null,
+                "sValue": null
+            }
+        ],
+        "dssCriterias": [
+            {
+                "criteriaId": 7,
+                "name": "Bisa QRIS",
+                "description": "Metode Pembayaran",
+                "type": "BENEFIT",
+                "weight": 1,
+                "parentCriteriaId": null,
+                "subCriteria": []
             }
         ],
         "dssCriteriaAlternatives": [
