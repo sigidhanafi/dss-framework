@@ -216,107 +216,82 @@ export default function SettingCriteria({
   return (
     <>
       {/* Topic Selection with Criteria Table */}
-      <div className='py-8'>
-        <div className='w-3/5 mx-auto'>
-          <div className='flex justify-between my-2'>
-            <h2 className='text-xl font-semibold mb-4'>{title}</h2>
-            {action == 'setting' && (
-              <div className='flex justify-end'>
-                <button
-                  className='flex border-blue-300 border text-blue-400 px-4 py-2 rounded-lg'
-                  onClick={() => {
-                    setShowFormCriteria(true);
-                  }}
+      <div className='w-3/5 mx-auto'>
+        <div className='flex justify-between my-2'>
+          <h2 className='text-xl font-semibold mb-4'>{title}</h2>
+          {action == 'setting' && (
+            <div className='flex justify-end'>
+              <button
+                className='flex border-blue-300 border text-blue-400 px-4 py-2 rounded-lg'
+                onClick={() => {
+                  setShowFormCriteria(true);
+                }}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 24 24'
+                  fill='currentColor'
+                  className='size-6'
                 >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='size-6'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                  <span className='mx-1'>New Criteria</span>
-                </button>
-              </div>
-            )}
-          </div>
-          <div className='overflow-x-auto'>
-            <table className='w-full border-collapse border border-gray-300'>
-              <thead>
-                <tr className='bg-gray-200'>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Nama Kriteria
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Deskripsi
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Tipe Kriteria
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Bobot Kriteria
-                  </th>
-                  {action != 'none' && (
-                    <th className='border border-gray-300 px-4 py-2'>Action</th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {/* criteria */}
-                {criteria &&
-                  criteria.length > 0 &&
-                  renderCriteria(criteria, 0, action)}
-
-                {/* empty criteria */}
-                {criteria && criteria.length <= 0 && (
-                  <tr className='bg-white text-gray-700'>
-                    <td
-                      className='border border-gray-300 flex-grow text-center py-4'
-                      colSpan={action != 'none' ? 5 : 4}
-                    >
-                      <p className='text-gray-500'>
-                        No criteria available. Click "Manage".{' '}
-                        <button
-                          className='text-blue-400 py-2'
-                          onClick={() => {
-                            router.push('/topics/' + topicId + '/update');
-                          }}
-                        >
-                          <span className='mx-2'>Manage</span>
-                        </button>
-                      </p>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {action == 'process' && (
-            <div className='flex justify-end space-x-4 my-4'>
-              <button
-                className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
-                onClick={() => {
-                  router.back();
-                }}
-              >
-                Back
-              </button>
-              <button
-                className='bg-blue-400 text-white px-4 py-2 rounded'
-                onClick={() => {
-                  router.push('/proceses/2/review-alternative');
-                }}
-              >
-                Review Alternatives
+                  <path
+                    fillRule='evenodd'
+                    d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+                <span className='mx-1'>New Criteria</span>
               </button>
             </div>
           )}
+        </div>
+        <div className='overflow-x-auto'>
+          <table className='w-full border-collapse border border-gray-300'>
+            <thead>
+              <tr className='bg-gray-200'>
+                <th className='border border-gray-300 px-4 py-2'>
+                  Nama Kriteria
+                </th>
+                <th className='border border-gray-300 px-4 py-2'>Deskripsi</th>
+                <th className='border border-gray-300 px-4 py-2'>
+                  Tipe Kriteria
+                </th>
+                <th className='border border-gray-300 px-4 py-2'>
+                  Bobot Kriteria
+                </th>
+                {action != 'none' && (
+                  <th className='border border-gray-300 px-4 py-2'>Action</th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {/* criteria */}
+              {criteria &&
+                criteria.length > 0 &&
+                renderCriteria(criteria, 0, action)}
+
+              {/* empty criteria */}
+              {criteria && criteria.length <= 0 && (
+                <tr className='bg-white text-gray-700'>
+                  <td
+                    className='border border-gray-300 flex-grow text-center py-4'
+                    colSpan={action != 'none' ? 5 : 4}
+                  >
+                    <p className='text-gray-500'>
+                      No criteria available. Click "Manage".{' '}
+                      <button
+                        className='text-blue-400 py-2'
+                        onClick={() => {
+                          router.push('/topics/' + topicId + '/update');
+                        }}
+                      >
+                        <span className='mx-2'>Manage</span>
+                      </button>
+                    </p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 

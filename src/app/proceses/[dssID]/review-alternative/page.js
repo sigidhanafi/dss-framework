@@ -20,14 +20,16 @@ export default function ReviewAlternativePage() {
     });
 
     const responseJson = await response.json();
-    console.log('responseJson', responseJson);
     if (responseJson.status == 200) {
       const data = responseJson.data;
       // setTopic({ id: data.id, name: data.name, description: data.description });
       // setCriterias(data.criterias);
       // setAlternatives(data.alternatives);
-
-      setTopic({ name: data.topic.name, topicId: data.topic.topicId });
+      setTopic({
+        name: data.topic.name,
+        topicId: data.topic.topicId,
+        description: data.topic.description,
+      });
     } else {
       // handle error
     }
@@ -69,9 +71,9 @@ export default function ReviewAlternativePage() {
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
         <h1 className='text-3xl font-bold'>
-          Input Alternative: Memilih Kandidat Beasiswa
+          Review Alternatives: {topic && topic.name}
         </h1>
-        <p>Memilih kandidat penerima beasiswa LPDP 2025 jalur prestasi</p>
+        <p>{topic && topic.description}</p>
       </div>
 
       <Stepper step={2} />
@@ -98,7 +100,7 @@ export default function ReviewAlternativePage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              router.push('/proceses/2/alternative-value');
+              router.push('/proceses/' + dssID + '/alternative-value');
             }}
           >
             Review Process

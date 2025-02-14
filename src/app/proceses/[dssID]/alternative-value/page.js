@@ -27,7 +27,7 @@ export default function AlternativeValuePage() {
     });
 
     const responseJson = await response.json();
-    console.log('responseJson', responseJson);
+
     if (responseJson.status == 200) {
       const data = responseJson.data;
       // setTopic({ id: data.id, name: data.name, description: data.description });
@@ -35,7 +35,11 @@ export default function AlternativeValuePage() {
       // setAlternatives(data.alternatives);
 
       setSelectedMethod(data.method);
-      setTopic({ name: data.topic.name, topicId: data.topic.topicId });
+      setTopic({
+        name: data.topic.name,
+        topicId: data.topic.topicId,
+        description: data.topic.description,
+      });
     } else {
       // handle error
     }
@@ -185,8 +189,10 @@ export default function AlternativeValuePage() {
     <>
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
-        <h1 className='text-3xl font-bold'>Topic: Memilih Kandidat Beasiswa</h1>
-        <p>Memilih kandidat penerima beasiswa LPDP 2025 jalur prestasi</p>
+        <h1 className='text-3xl font-bold'>
+          Select Method: {topic && topic.name}
+        </h1>
+        <p>{topic && topic.description}</p>
       </div>
 
       <Stepper step={3} />
@@ -246,7 +252,7 @@ export default function AlternativeValuePage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              router.replace('/proceses/2/alternative-rank');
+              router.replace('/proceses/' + dssID + '/alternative-rank');
             }}
           >
             Calculate

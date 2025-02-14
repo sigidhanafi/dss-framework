@@ -6,7 +6,9 @@ import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 export default function SelectCriteria() {
+  const router = useRouter();
   const { dssID } = useParams();
+
   const [topic, setTopic] = useState(null);
   const [criterias, setCriterias] = useState([]);
 
@@ -26,7 +28,11 @@ export default function SelectCriteria() {
       // setCriterias(data.criterias);
       // setAlternatives(data.alternatives);
 
-      setTopic({ name: data.topic.name, topicId: data.topic.topicId });
+      setTopic({
+        name: data.topic.name,
+        topicId: data.topic.topicId,
+        description: data.topic.description,
+      });
     } else {
       // handle error
     }
@@ -84,8 +90,8 @@ export default function SelectCriteria() {
     <>
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
-        <h1 className='text-3xl font-bold'>Topic: Memilih Kandidat Beasiswa</h1>
-        <p>Memilih kandidat penerima beasiswa LPDP 2025 jalur prestasi</p>
+        <h1 className='text-3xl font-bold'>Topic: {topic && topic.name}</h1>
+        <p>{topic && topic.description}</p>
       </div>
 
       <Stepper step={1} />
@@ -98,6 +104,27 @@ export default function SelectCriteria() {
           topicId={topic.topicId}
         />
       )}
+
+      <div className='w-3/5 mx-auto'>
+        <div className='flex justify-end space-x-4 my-4'>
+          <button
+            className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
+            onClick={() => {
+              router.back();
+            }}
+          >
+            Back
+          </button>
+          <button
+            className='bg-blue-400 text-white px-4 py-2 rounded'
+            onClick={() => {
+              router.push('/proceses/' + dssID + '/review-alternative');
+            }}
+          >
+            Review Alternatives
+          </button>
+        </div>
+      </div>
     </>
   );
 }
