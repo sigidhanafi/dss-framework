@@ -165,9 +165,9 @@ export default function SettingAlternative({
               {alternatives &&
                 alternatives.length > 0 &&
                 alternatives.map((alternative) => {
-                  const defaultChecked = dssAlternatives.includes(
-                    alternative.alternativeId
-                  );
+                  const defaultChecked =
+                    dssAlternatives &&
+                    dssAlternatives.includes(alternative.alternativeId);
                   return (
                     <tr
                       key={alternative.name}

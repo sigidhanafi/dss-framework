@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 export default function AlternativeValue({
   alternatives,
   criteriaAlternativeValue,
-  dssID,
   showAction = true,
   updateParamToParent,
 }) {
@@ -80,7 +79,7 @@ export default function AlternativeValue({
       return (
         <React.Fragment key={index + level}>
           <tr key={index + level} className='bg-white text-gray-700'>
-            <td className='border border-blue-300 flex-grow'>
+            <td className='border border-gray-300 flex-grow'>
               <div className='flex flex-row items-center'>
                 <div
                   className={`flex bg-gray-300 h-6 ${spacerWidthClasses[level]}`}
@@ -161,27 +160,6 @@ export default function AlternativeValue({
               </tbody>
             </table>
           </div>
-          {showAction && (
-            <div className='flex justify-end space-x-4 my-4'>
-              <button
-                className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
-                onClick={() => {
-                  // router.back();
-                }}
-              >
-                Back
-              </button>
-              <button
-                className='bg-blue-400 text-white px-4 py-2 rounded'
-                onClick={() => {
-                  // router.back();
-                  router.push('/proceses/2/review-alternative');
-                }}
-              >
-                Input Alternatives
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </>

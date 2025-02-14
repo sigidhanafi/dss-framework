@@ -110,12 +110,6 @@ export default function SettingCriteria({
     });
 
     const responseJson = await response.json();
-
-    // if (responseJson.status == 200) {
-    //   // fetchTopics();
-    // } else {
-    //   // show notif error
-    // }
   };
 
   const handleRemoveCriteria = async (criteriaId) => {
@@ -127,12 +121,6 @@ export default function SettingCriteria({
     });
 
     const responseJson = await response.json();
-
-    // if (responseJson.status == 200) {
-    //   // fetchTopics();
-    // } else {
-    //   // show notif error
-    // }
   };
 
   const renderCriteria = (data, level = 0, action) => {
@@ -146,7 +134,8 @@ export default function SettingCriteria({
         'w-full',
       ];
 
-      const defaultChecked = dssCriterias.includes(crit.criteriaId);
+      const defaultChecked =
+        dssCriterias && dssCriterias.includes(crit.criteriaId);
 
       return (
         <React.Fragment key={index + level}>

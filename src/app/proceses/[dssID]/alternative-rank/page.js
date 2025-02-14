@@ -9,13 +9,14 @@ export default function AlternativeRankPage() {
   const { dssID } = useParams();
 
   const [topic, setTopic] = useState();
+  const [dssAlternatives, setDssAlternatives] = useState([]);
 
-  const alternatives = [
-    { name: 'Sigit', score: '90.78', rank: '1' },
-    { name: 'Silmi', score: '80.78', rank: '2' },
-    { name: 'Alfy', score: '70.78', rank: '3' },
-    { name: 'Rafa', score: '60.78', rank: '4' },
-  ];
+  // const alternatives = [
+  //   { name: 'Sigit', score: '90.78', rank: '1' },
+  //   { name: 'Silmi', score: '80.78', rank: '2' },
+  //   { name: 'Alfy', score: '70.78', rank: '3' },
+  //   { name: 'Rafa', score: '60.78', rank: '4' },
+  // ];
 
   const fetchDetailDss = async () => {
     const response = await fetch('/api/dss/' + dssID, {
@@ -27,9 +28,8 @@ export default function AlternativeRankPage() {
 
     if (responseJson.status == 200) {
       const data = responseJson.data;
-      // setTopic({ id: data.id, name: data.name, description: data.description });
-      // setCriterias(data.criterias);
-      // setAlternatives(data.alternatives);
+
+      setDssAlternatives(data.dssAlternatives);
 
       setTopic({
         name: data.topic.name,
@@ -66,11 +66,15 @@ export default function AlternativeRankPage() {
               </tr>
             </thead>
             <tbody>
-              {alternatives.map((item, index) => (
+              {dssAlternatives.map((item, index) => (
                 <tr key={index} className='text-center'>
-                  <td className='border border-gray-300 p-2'>{item.name}</td>
-                  <td className='border border-gray-300 p-2'>{item.score}</td>
-                  <td className='border border-gray-300 p-2'>{item.rank}</td>
+                  <td className='border border-gray-300 p-2'>
+                    {item.alternative.name}
+                  </td>
+                  <td className='border border-gray-300 p-2'>{item.sValue}</td>
+                  <td className='border border-gray-300 p-2'>
+                    {item.rankValue}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -82,7 +86,7 @@ export default function AlternativeRankPage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              router.push('/topics');
+              router.push('/histories');
             }}
           >
             Finish
