@@ -142,6 +142,9 @@ export default function TopicPage() {
                 className='w-full p-2 border rounded-lg'
                 placeholder='Enter topic description'
                 defaultValue={formTopic.description}
+                onChange={(e) => {
+                  setFormTopic({ ...formTopic, description: e.target.value });
+                }}
               ></textarea>
             </div>
 
