@@ -81,7 +81,7 @@ export default function TopicPage() {
           {loadingPage == false && topics && topics.length <= 0 && (
             <div className='mt-4 p-4 border-blue-200 border rounded-lg'>
               <p className='text-gray-500'>
-                No topics available. Click "New Topic" to add one.{' '}
+                No topics available. Click New Topic to add one.{' '}
                 <button
                   className='text-blue-400 py-2'
                   onClick={() => {

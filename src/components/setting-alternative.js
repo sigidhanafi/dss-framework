@@ -269,7 +269,7 @@ export default function SettingAlternative({
                     colSpan={action != 'none' ? 3 : 2}
                   >
                     <p className='text-gray-500'>
-                      No alternative available. Click "Manage".{' '}
+                      No alternative available. Click Manage.{' '}
                       <button
                         className='text-blue-400 py-2'
                         onClick={() => {
