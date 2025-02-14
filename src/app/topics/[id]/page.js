@@ -20,109 +20,37 @@ export default function TopicDetailPage() {
     });
 
     const responseJson = await response.json();
-    // setTopics(responseJson.data);
-    // setLoadingPage(false);
-
     if (responseJson.status == 200) {
       const data = responseJson.data;
 
       setTopic({ id: data.id, name: data.name, description: data.description });
       setCriterias(data.criterias);
       setAlternatives(data.alternatives);
+    } else {
+      // handle error
     }
+  };
 
-    // setTopic(response)
+  const handleChooseTopic = async () => {
+    const params = { topicId: Number(topicId), method: 'WP' };
+    const response = await fetch('/api/dss', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+    console.log('responseJson, ', responseJson.data);
+    if (responseJson.status == 200) {
+      router.push('/proceses/' + responseJson.data.dssId + '/select-criteria');
+    } else {
+      // show notif error
+    }
   };
 
   useEffect(() => {
     fetchTopicDetail();
   }, []);
-
-  // const criteria = [
-  //   {
-  //     name: 'Pengalaman',
-  //     desc: 'Lama bekerja dalam bidang terkait',
-  //     type: 'Benefit',
-  //     weight: 'Tinggi',
-  //     subcriteria: [
-  //       {
-  //         name: '> 5 Tahun',
-  //         desc: 'Pengalaman lebih dari 5 tahun',
-  //         type: 'Benefit',
-  //         weight: 'Tinggi',
-  //         subcriteria: [
-  //           {
-  //             name: 'Sub Sub Criteria',
-  //             desc: 'Sub Sub Sub',
-  //             type: 'Benefit',
-  //             weight: 'Tinggi',
-  //             subcriteria: [
-  //               {
-  //                 name: 'Sub Sub Sub Criteria',
-  //                 desc: 'Sub Sub Sub Sub',
-  //                 type: 'Benefit',
-  //                 weight: 'Tinggi',
-  //                 subcriteria: [],
-  //               },
-  //             ],
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         name: '3-5 Tahun',
-  //         desc: 'Pengalaman antara 3 hingga 5 tahun',
-  //         type: 'Benefit',
-  //         weight: 'Sedang',
-  //       },
-  //       {
-  //         name: '< 3 Tahun',
-  //         desc: 'Pengalaman kurang dari 3 tahun',
-  //         type: 'Benefit',
-  //         weight: 'Rendah',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     name: 'Universitas',
-  //     desc: 'Asal universitas',
-  //     type: 'Benefit',
-  //     weight: 'Tinggi',
-  //     subcriteria: [],
-  //   },
-  //   {
-  //     name: 'IPK',
-  //     desc: 'Indeks Prestasi Kumulatif akademik',
-  //     type: 'Benefit',
-  //     weight: 'Sedang',
-  //     subcriteria: [
-  //       {
-  //         name: '> 3.5',
-  //         desc: 'IPK lebih dari 3.5',
-  //         type: 'Benefit',
-  //         weight: 'Tinggi',
-  //       },
-  //       {
-  //         name: '3.0 - 3.5',
-  //         desc: 'IPK antara 3.0 dan 3.5',
-  //         type: 'Benefit',
-  //         weight: 'Sedang',
-  //       },
-  //       {
-  //         name: '< 3.0',
-  //         desc: 'IPK kurang dari 3.0',
-  //         type: 'Benefit',
-  //         weight: 'Rendah',
-  //       },
-  //     ],
-  //   },
-  // ];
-
-  // const alternatives = [
-  //   { name: 'Sigit' },
-  //   { name: 'Silmi' },
-  //   { name: 'Alfy' },
-  //   { name: 'Rafa' },
-  // ];
 
   const renderCriteria = (data, level = 0) => {
     return data.map((crit, index) => {
@@ -157,8 +85,8 @@ export default function TopicDetailPage() {
     <>
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
-        <h1 className='text-3xl font-bold'>Topic: Memilih Kandidat Beasiswa</h1>
-        <p>Memilih kandidat penerima beasiswa LPDP 2025 jalur prestasi</p>
+        <h1 className='text-3xl font-bold'>Topic: {topic.name}</h1>
+        <p>{topic.description}</p>
       </div>
 
       {/* Topic Selection with Criteria Table */}
@@ -199,7 +127,7 @@ export default function TopicDetailPage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              router.push('/proceses/' + topicId + '/select-criteria');
+              handleChooseTopic();
             }}
           >
             Choose Topic

@@ -32,3 +32,19 @@ export const getCriteriaById = async (criteriaId) => {
 
   return criteria;
 };
+
+export const getCriteriaByTopicId = async (topicId) => {
+  const criteria = await prisma.criteria.findMany({
+    where: { topicId: parseInt(topicId) },
+    select: {
+      criteriaId: true,
+      name: true,
+      description: true,
+      type: true,
+      weight: true,
+      parentCriteriaId: true,
+    },
+  });
+
+  return criteria;
+};

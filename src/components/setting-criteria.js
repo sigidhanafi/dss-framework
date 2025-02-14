@@ -194,7 +194,7 @@ export default function SettingCriteria({
                     <label className='relative inline-flex items-center cursor-pointer'>
                       <input
                         type='checkbox'
-                        checked={false}
+                        checked={crit.selected}
                         onChange={() => {}}
                         className='sr-only peer'
                       />

@@ -77,5 +77,6 @@ function buildCriteriaTree(criteriaList, parentId = null) {
     .map((item) => ({
       ...item,
       subCriteria: buildCriteriaTree(criteriaList, item.criteriaId),
+      selected: true,
     }));
 }

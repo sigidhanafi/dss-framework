@@ -3,81 +3,62 @@
 import SettingCriteria from '@/components/setting-criteria';
 import Stepper from '@/components/stepper';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function SelectCriteria() {
-  const { id: topicId } = useParams();
-  const criteria = [
-    {
-      name: 'Pengalaman',
-      desc: 'Lama bekerja dalam bidang terkait',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      subcriteria: [
-        {
-          name: '> 5 Tahun',
-          desc: 'Pengalaman lebih dari 5 tahun',
-          type: 'Benefit',
-          weight: 'Tinggi',
-          subcriteria: [
-            {
-              name: 'Sub Sub Criteria',
-              desc: 'Sub Sub Sub',
-              type: 'Benefit',
-              weight: 'Tinggi',
-            },
-          ],
-        },
-        {
-          name: '3-5 Tahun',
-          desc: 'Pengalaman antara 3 hingga 5 tahun',
-          type: 'Benefit',
-          weight: 'Sedang',
-        },
-        {
-          name: '< 3 Tahun',
-          desc: 'Pengalaman kurang dari 3 tahun',
-          type: 'Benefit',
-          weight: 'Rendah',
-        },
-      ],
-    },
-    {
-      name: 'Universitas',
-      desc: 'Asal universitas',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      subcriteria: [],
-    },
-    {
-      name: 'IPK',
-      desc: 'Indeks Prestasi Kumulatif akademik',
-      type: 'Benefit',
-      weight: 'Sedang',
-      subcriteria: [
-        {
-          name: '> 3.5',
-          desc: 'IPK lebih dari 3.5',
-          type: 'Benefit',
-          weight: 'Tinggi',
-        },
-        {
-          name: '3.0 - 3.5',
-          desc: 'IPK antara 3.0 dan 3.5',
-          type: 'Benefit',
-          weight: 'Sedang',
-        },
-        {
-          name: '< 3.0',
-          desc: 'IPK kurang dari 3.0',
-          type: 'Benefit',
-          weight: 'Rendah',
-        },
-      ],
-    },
-  ];
+  const { dssID } = useParams();
+  const [topic, setTopic] = useState(null);
+  const [criterias, setCriterias] = useState([]);
 
   const step = 1;
+
+  const fetchDetailDss = async () => {
+    const response = await fetch('/api/dss/' + dssID, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const responseJson = await response.json();
+    console.log('responseJson', responseJson);
+    if (responseJson.status == 200) {
+      const data = responseJson.data;
+      // setTopic({ id: data.id, name: data.name, description: data.description });
+      // setCriterias(data.criterias);
+      // setAlternatives(data.alternatives);
+
+      setTopic({ name: data.topic.name, topicId: data.topic.topicId });
+    } else {
+      // handle error
+    }
+  };
+
+  const fetchTopicDetail = async () => {
+    if (topic == null) {
+      return;
+    }
+
+    const response = await fetch('/api/topics/' + topic.topicId, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const responseJson = await response.json();
+    if (responseJson.status == 200) {
+      const data = responseJson.data;
+
+      setCriterias(data.criterias);
+    } else {
+      // handle error
+    }
+  };
+
+  useEffect(() => {
+    fetchDetailDss();
+  }, []);
+
+  useEffect(() => {
+    fetchTopicDetail();
+  }, [topic]);
 
   return (
     <>
@@ -89,12 +70,14 @@ export default function SelectCriteria() {
 
       <Stepper step={1} />
 
-      <SettingCriteria
-        title={'Setting Criteria'}
-        criteria={criteria}
-        action={'process'}
-        topicId={topicId}
-      />
+      {topic && criterias && (
+        <SettingCriteria
+          title={'Setting Criteria'}
+          criteria={criterias}
+          action={'process'}
+          topicId={topic.topicId}
+        />
+      )}
     </>
   );
 }
