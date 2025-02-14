@@ -3,7 +3,7 @@ import prisma from '../prisma';
 import { buildCriteriaTree } from './topics.js';
 
 
-export const createDss = async (topicId, method) => {
+export const createDss = async (topicId) => {
 
     const creatorId = 1 
   
