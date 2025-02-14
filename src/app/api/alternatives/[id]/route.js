@@ -5,25 +5,25 @@ import {
   updateAlternative,
 } from '@/lib/services/alternatives';
 
-export async function GET(req, { params }) {
-  const { id } = await params;
+// export async function GET(req, { params }) {
+//   const { id } = await params;
 
-  try {
-    const alternative = await getOneAlternative({
-      alternativeId: parseInt(id),
-    });
-    return NextResponse.json({
-      status: 200,
-      message: 'Success fetch alternative',
-      data: alternative,
-    });
-  } catch (error) {
-    return NextResponse.json(
-      { message: 'Error fetching alternative', detail: error },
-      { status: 500 }
-    );
-  }
-}
+//   try {
+//     const alternative = await getOneAlternative({
+//       alternativeId: parseInt(id),
+//     });
+//     return NextResponse.json({
+//       status: 200,
+//       message: 'Success fetch alternative',
+//       data: alternative,
+//     });
+//   } catch (error) {
+//     return NextResponse.json(
+//       { message: 'Error fetching alternative', detail: error },
+//       { status: 500 }
+//     );
+//   }
+// }
 
 export async function PUT(req, { params }) {
   const { id } = await params;
