@@ -75,7 +75,7 @@ model Dss {
   dssId Int @id @default(autoincrement())
   topic Topic @relation(fields: [topicId], references: [topicId])
   topicId Int
-  method DssMethodType
+  method DssMethodType?
   dssAlternatives DssAlternative[]
   dssCriterias DssCriteria[]
   dssCriteriaAlternatives DssCriteriaAlternative[]
