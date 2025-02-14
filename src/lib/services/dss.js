@@ -1,4 +1,7 @@
+import { DssMethodType } from '@prisma/client';
 import prisma from '../prisma';
+import { buildCriteriaTree } from './topics.js';
+
 
 export const createDss = async (topicId, method) => {
 
@@ -41,6 +44,20 @@ export const getDetailDss = async (dssId) => {
                     sValue: true
                 }
             },
+            dssCriterias: { 
+                select: {
+                    criteria: {
+                        select: {
+                            criteriaId: true,
+                            name: true,
+                            description: true,
+                            type: true,
+                            weight: true,
+                            parentCriteriaId: true
+                        }
+                    }
+                }
+            },
             dssCriteriaAlternatives: {
                 select: {
                     dssCriteriaAlternativeId: true,
@@ -60,9 +77,11 @@ export const getDetailDss = async (dssId) => {
                 }
             }
         },
-        where: { dssId: parseInt(dssId) },
-            
+        where: { dssId: parseInt(dssId) },   
     });
+
+    const criteriaList = dss.dssCriterias.flatMap(Object.values);    
+    dss.dssCriterias = buildCriteriaTree(criteriaList)
     return dss;
 };
 
@@ -74,13 +93,11 @@ export const addCriterias = async (data) => {
     });
     
     return;
-};
-
+};   
 export const saveDssResult = async (data) => {
     console.log(data)
     const _ = await prisma.dssAlternative.createMany({
         data: data
     });
-      
     return;
 };

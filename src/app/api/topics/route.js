@@ -38,7 +38,7 @@ export async function POST(req) {
 
 /*
 --> POST {url}/api/topics
-CREATE NEW TOPIC
+--> CREATE NEW TOPIC
 REQ BODY
 {
     "name": "Beli Makan Malam",
@@ -53,7 +53,7 @@ RES BODY
 }
 
 --> GET {url}/api/topics
-GET LIST TOPICS
+--> GET LIST TOPICS
 RES BODY
 {
     "status": 200,

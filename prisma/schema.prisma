@@ -49,6 +49,7 @@ model Criteria {
   topic Topic @relation(fields: [topicId], references: [topicId])
   topicId Int
   dssCriteriaAlternatives DssCriteriaAlternative[]
+  dssCriterias DssCriteria[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -76,6 +77,7 @@ model Dss {
   topicId Int
   method DssMethodType
   dssAlternatives DssAlternative[]
+  dssCriterias DssCriteria[]
   dssCriteriaAlternatives DssCriteriaAlternative[]
   creator User @relation(fields: [creatorId], references: [userId])
   creatorId Int
@@ -87,6 +89,16 @@ enum DssMethodType {
   WP
   SAW
   TOPSIS
+}
+
+model DssCriteria {
+  dssCriteriaId Int @id @default(autoincrement())
+  dss Dss @relation(fields: [dssId], references: [dssId])
+  dssId Int
+  criteria Criteria @relation(fields: [criteriaId], references: [criteriaId])
+  criteriaId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model DssAlternative {
