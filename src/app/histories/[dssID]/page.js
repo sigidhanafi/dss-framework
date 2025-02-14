@@ -69,15 +69,6 @@ export default function DssDetailPage() {
     }
   };
 
-  const handleCalculate = () => {
-    const params = {
-      method: selectedMethod,
-      criterias: criteriaParams,
-    };
-
-    router.push('/proceses/' + dssID + '/alternative-rank');
-  };
-
   useEffect(() => {
     fetchDetailDss();
   }, []);
@@ -106,9 +97,9 @@ export default function DssDetailPage() {
             className={`border p-4 rounded shadow-sm text-center flex items-center justify-between`}
           >
             <div className='flex-grow'>
-              <h3 className='text-lg font-semibold'>WP</h3>
+              <h3 className='text-lg font-semibold'>{selectedMethod}</h3>
               <p className='text-gray-600'>
-                Metode WP untuk pengambilan keputusan
+                Metode {selectedMethod} untuk pengambilan keputusan
               </p>
             </div>
             <svg

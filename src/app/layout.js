@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
                 <Link href={'/histories'} className='hover:text-blue-500'>
                   Histories
                 </Link>
-                <Link href='#' className='hover:text-blue-500'>
+                <Link href={'/login'} className='hover:text-blue-500'>
                   Login
                 </Link>
               </div>

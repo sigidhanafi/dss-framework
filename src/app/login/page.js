@@ -8,6 +8,8 @@ import { useState } from 'react';
 export default function LoginPage() {
   const router = useRouter();
 
+  const handleLogin = async () => {};
+
   return (
     <>
       {/* Header / Title */}
@@ -18,15 +20,19 @@ export default function LoginPage() {
 
       <div className='w-1/5 mx-auto my-10'>
         {/* Login Form */}
-        <form className='space-y-4'>
+        <div className='space-y-4'>
           <div>
             <label className='block text-sm font-medium text-gray-700'>
-              Email
+              Username
             </label>
             <input
-              type='email'
+              type='text'
               className='w-full p-2 border rounded-md'
-              placeholder='Enter your email'
+              placeholder='Enter username'
+              defaultValue={''}
+              onChange={(e) => {
+                setFormTopic({ ...formTopic, name: e.target.value });
+              }}
             />
           </div>
           <div>
@@ -34,20 +40,26 @@ export default function LoginPage() {
               Password
             </label>
             <input
-              type='password'
+              type='text'
               className='w-full p-2 border rounded-md'
-              placeholder='Enter your password'
+              placeholder='Enter password'
+              defaultValue={''}
+              onChange={(e) => {
+                setFormTopic({ ...formTopic, name: e.target.value });
+              }}
             />
           </div>
 
           {/* Submit Button */}
           <button
-            type='submit'
-            className='w-full px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500'
+            onClick={() => {
+              handleLogin();
+            }}
+            className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
           >
             Login
           </button>
-        </form>
+        </div>
       </div>
     </>
   );
