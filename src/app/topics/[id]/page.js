@@ -1,97 +1,128 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import AlternativeInput from '@/components/alternative-input';
+import React, { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import SettingAlternative from '@/components/setting-alternative';
+import SettingCriteria from '@/components/setting-criteria';
 
 export default function TopicDetailPage() {
   const router = useRouter();
+  const { id: topicId } = useParams();
 
-  const criteria = [
-    {
-      name: 'Pengalaman',
-      desc: 'Lama bekerja dalam bidang terkait',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      subcriteria: [
-        {
-          name: '> 5 Tahun',
-          desc: 'Pengalaman lebih dari 5 tahun',
-          type: 'Benefit',
-          weight: 'Tinggi',
-          subcriteria: [
-            {
-              name: 'Sub Sub Criteria',
-              desc: 'Sub Sub Sub',
-              type: 'Benefit',
-              weight: 'Tinggi',
-              subcriteria: [
-                {
-                  name: 'Sub Sub Sub Criteria',
-                  desc: 'Sub Sub Sub Sub',
-                  type: 'Benefit',
-                  weight: 'Tinggi',
-                  subcriteria: [],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          name: '3-5 Tahun',
-          desc: 'Pengalaman antara 3 hingga 5 tahun',
-          type: 'Benefit',
-          weight: 'Sedang',
-        },
-        {
-          name: '< 3 Tahun',
-          desc: 'Pengalaman kurang dari 3 tahun',
-          type: 'Benefit',
-          weight: 'Rendah',
-        },
-      ],
-    },
-    {
-      name: 'Universitas',
-      desc: 'Asal universitas',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      subcriteria: [],
-    },
-    {
-      name: 'IPK',
-      desc: 'Indeks Prestasi Kumulatif akademik',
-      type: 'Benefit',
-      weight: 'Sedang',
-      subcriteria: [
-        {
-          name: '> 3.5',
-          desc: 'IPK lebih dari 3.5',
-          type: 'Benefit',
-          weight: 'Tinggi',
-        },
-        {
-          name: '3.0 - 3.5',
-          desc: 'IPK antara 3.0 dan 3.5',
-          type: 'Benefit',
-          weight: 'Sedang',
-        },
-        {
-          name: '< 3.0',
-          desc: 'IPK kurang dari 3.0',
-          type: 'Benefit',
-          weight: 'Rendah',
-        },
-      ],
-    },
-  ];
+  const [topic, setTopic] = useState({ id: '', name: '', description: '' });
+  const [criterias, setCriterias] = useState([]);
+  const [alternatives, setAlternatives] = useState([]);
 
-  const alternatives = [
-    { name: 'Sigit' },
-    { name: 'Silmi' },
-    { name: 'Alfy' },
-    { name: 'Rafa' },
-  ];
+  const fetchTopicDetail = async () => {
+    const response = await fetch('/api/topics/' + topicId, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const responseJson = await response.json();
+    // setTopics(responseJson.data);
+    // setLoadingPage(false);
+
+    if (responseJson.status == 200) {
+      const data = responseJson.data;
+
+      setTopic({ id: data.id, name: data.name, description: data.description });
+      setCriterias(data.criterias);
+      setAlternatives(data.alternatives);
+    }
+
+    // setTopic(response)
+  };
+
+  useEffect(() => {
+    fetchTopicDetail();
+  }, []);
+
+  // const criteria = [
+  //   {
+  //     name: 'Pengalaman',
+  //     desc: 'Lama bekerja dalam bidang terkait',
+  //     type: 'Benefit',
+  //     weight: 'Tinggi',
+  //     subcriteria: [
+  //       {
+  //         name: '> 5 Tahun',
+  //         desc: 'Pengalaman lebih dari 5 tahun',
+  //         type: 'Benefit',
+  //         weight: 'Tinggi',
+  //         subcriteria: [
+  //           {
+  //             name: 'Sub Sub Criteria',
+  //             desc: 'Sub Sub Sub',
+  //             type: 'Benefit',
+  //             weight: 'Tinggi',
+  //             subcriteria: [
+  //               {
+  //                 name: 'Sub Sub Sub Criteria',
+  //                 desc: 'Sub Sub Sub Sub',
+  //                 type: 'Benefit',
+  //                 weight: 'Tinggi',
+  //                 subcriteria: [],
+  //               },
+  //             ],
+  //           },
+  //         ],
+  //       },
+  //       {
+  //         name: '3-5 Tahun',
+  //         desc: 'Pengalaman antara 3 hingga 5 tahun',
+  //         type: 'Benefit',
+  //         weight: 'Sedang',
+  //       },
+  //       {
+  //         name: '< 3 Tahun',
+  //         desc: 'Pengalaman kurang dari 3 tahun',
+  //         type: 'Benefit',
+  //         weight: 'Rendah',
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     name: 'Universitas',
+  //     desc: 'Asal universitas',
+  //     type: 'Benefit',
+  //     weight: 'Tinggi',
+  //     subcriteria: [],
+  //   },
+  //   {
+  //     name: 'IPK',
+  //     desc: 'Indeks Prestasi Kumulatif akademik',
+  //     type: 'Benefit',
+  //     weight: 'Sedang',
+  //     subcriteria: [
+  //       {
+  //         name: '> 3.5',
+  //         desc: 'IPK lebih dari 3.5',
+  //         type: 'Benefit',
+  //         weight: 'Tinggi',
+  //       },
+  //       {
+  //         name: '3.0 - 3.5',
+  //         desc: 'IPK antara 3.0 dan 3.5',
+  //         type: 'Benefit',
+  //         weight: 'Sedang',
+  //       },
+  //       {
+  //         name: '< 3.0',
+  //         desc: 'IPK kurang dari 3.0',
+  //         type: 'Benefit',
+  //         weight: 'Rendah',
+  //       },
+  //     ],
+  //   },
+  // ];
+
+  // const alternatives = [
+  //   { name: 'Sigit' },
+  //   { name: 'Silmi' },
+  //   { name: 'Alfy' },
+  //   { name: 'Rafa' },
+  // ];
 
   const renderCriteria = (data, level = 0) => {
     return data.map((crit, index) => {
@@ -131,34 +162,20 @@ export default function TopicDetailPage() {
       </div>
 
       {/* Topic Selection with Criteria Table */}
-      <div className='my-4'>
-        <div className='w-3/5 mx-auto'>
-          <h2 className='text-xl font-semibold mb-4'>Criteria</h2>
-          <div className='overflow-x-auto'>
-            <table className='w-full border-collapse border border-gray-300'>
-              <thead>
-                <tr className='bg-gray-200'>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Nama Kriteria
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Deskripsi
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Tipe Kriteria
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Bobot Kriteria
-                  </th>
-                </tr>
-              </thead>
-              <tbody>{renderCriteria(criteria)}</tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      <SettingCriteria
+        title={'Criterias'}
+        criteria={criterias}
+        topicId={topicId}
+        action={'none'}
+      />
 
-      <AlternativeInput alternatives={alternatives} action={'none'} />
+      {/* Alternative Section */}
+      <SettingAlternative
+        title={'Alternatives'}
+        alternatives={alternatives}
+        topicId={topicId}
+        action={'none'}
+      />
 
       {/* Action */}
       <div className='w-3/5 mx-auto'>
@@ -174,15 +191,15 @@ export default function TopicDetailPage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
             onClick={() => {
-              router.push('/topics/2/update');
+              router.push('/topics/' + topicId + '/update');
             }}
           >
-            Manage Topic
+            Manage
           </button>
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              router.push('/proceses/2/select-criteria');
+              router.push('/proceses/' + topicId + '/select-criteria');
             }}
           >
             Choose Topic

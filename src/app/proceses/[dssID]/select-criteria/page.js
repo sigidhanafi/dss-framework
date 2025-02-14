@@ -92,8 +92,7 @@ export default function SelectCriteria() {
         title={'Setting Criteria'}
         criteria={criteria}
         action={'process'}
-        settingAction={false}
-        processAction={true}
+        topicId={topicId}
       />
     </>
   );

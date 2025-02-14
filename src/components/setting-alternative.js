@@ -2,14 +2,18 @@
 
 import { useState } from 'react';
 import Modal from './modal';
+import { useRouter } from 'next/navigation';
 
-export default function AlternativeInput({
+export default function SettingAlternative({
   title,
   alternatives,
   criteria,
+  topicId,
   action,
 }) {
   const [showNewAlternative, setShowNewAlternative] = useState(false);
+
+  const route = useRouter();
 
   return (
     <>
@@ -54,7 +58,9 @@ export default function AlternativeInput({
               </tr>
             </thead>
             <tbody>
+              {/* alternative */}
               {alternatives &&
+                alternatives.length > 0 &&
                 alternatives.map((alternative) => {
                   return (
                     <tr
@@ -109,6 +115,28 @@ export default function AlternativeInput({
                     </tr>
                   );
                 })}
+
+              {/* empty criteria */}
+              {alternatives && alternatives.length <= 0 && (
+                <tr className='bg-white text-gray-700'>
+                  <td
+                    className='border border-gray-300 flex-grow text-center py-4'
+                    colSpan={action != 'none' ? 3 : 2}
+                  >
+                    <p className='text-gray-500'>
+                      No alternative available. Click "Manage".{' '}
+                      <button
+                        className='text-blue-400 py-2'
+                        onClick={() => {
+                          route.push('/topics/' + topicId + '/update');
+                        }}
+                      >
+                        <span className='mx-2'>Manage</span>
+                      </button>
+                    </p>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

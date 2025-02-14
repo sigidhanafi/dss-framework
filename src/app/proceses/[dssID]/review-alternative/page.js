@@ -1,6 +1,6 @@
 'use client';
 
-import AlternativeInput from '@/components/alternative-input';
+import SettingAlternative from '@/components/setting-alternative';
 import SettingCriteria from '@/components/setting-criteria';
 import Stepper from '@/components/stepper';
 import { useRouter } from 'next/navigation';
@@ -98,7 +98,7 @@ export default function ReviewAlternativePage() {
 
       <Stepper step={2} />
 
-      <AlternativeInput
+      <SettingAlternative
         title={'Alternatives'}
         alternatives={alternatives}
         action={'process'}

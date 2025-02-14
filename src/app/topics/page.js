@@ -2,7 +2,7 @@
 
 import Modal from '@/components/modal';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function TopicPage() {
@@ -24,7 +24,7 @@ export default function TopicPage() {
     setLoadingPage(false);
   };
 
-  const createTopic = async () => {
+  const handleCreateTopic = async () => {
     const params = { name: formTopic.name, description: formTopic.description };
     const response = await fetch('/api/topics', {
       method: 'POST',
@@ -148,7 +148,7 @@ export default function TopicPage() {
             {/* Submit Button */}
             <button
               onClick={() => {
-                createTopic();
+                handleCreateTopic();
               }}
               className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
             >

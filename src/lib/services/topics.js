@@ -2,21 +2,21 @@ import prisma from '../prisma';
 
 export const getTopics = async () => {
   const topics = await prisma.topic.findMany({
-      select: {
-          topicId: true,
+    select: {
+      topicId: true,
+      name: true,
+      creator: {
+        select: {
           name: true,
-          creator: {
-              select: {
-                  name: true
-              }
-          }
-      }
+        },
+      },
+    },
   });
 
-  const aliasesTopicList = topics.map(topic => ({
+  const aliasesTopicList = topics.map((topic) => ({
     id: topic.topicId,
     name: topic.name,
-    author: topic.creator.name
+    author: topic.creator.name,
   }));
 
   return aliasesTopicList;
@@ -24,30 +24,31 @@ export const getTopics = async () => {
 
 export const getTopicDetail = async (id) => {
   const topic = await prisma.topic.findUnique({
-    where: { topicId: parseInt(id)},
+    where: { topicId: parseInt(id) },
     select: {
-        topicId: true,
-        name: true,
-        description: true,
-        alternatives: {
-          select: {
-            alternativeId: true,
-            name: true,
-            description: true
-          }
-        }
-    }
+      topicId: true,
+      name: true,
+      description: true,
+      alternatives: {
+        select: {
+          alternativeId: true,
+          name: true,
+          description: true,
+        },
+      },
+    },
   });
   const flatCriteriaList = await prisma.criteria.findMany({
-    where: { topicId: parseInt(id)},
+    where: { topicId: parseInt(id) },
     select: {
       criteriaId: true,
       name: true,
       description: true,
       type: true,
       weight: true,
-      parentCriteriaId: true
-    }});
+      parentCriteriaId: true,
+    },
+  });
 
   const criteriaTree = buildCriteriaTree(flatCriteriaList);
 
@@ -57,13 +58,13 @@ export const getTopicDetail = async (id) => {
     description: topic.description,
     criterias: criteriaTree,
     alternatives: topic.alternatives,
-  }
+  };
   return res;
 };
 
 export const createTopic = async (name, description) => {
-  const creatorId = 1
-  
+  const creatorId = 1;
+
   const topic = await prisma.topic.create({
     data: { name, description, creatorId },
   });
@@ -72,8 +73,8 @@ export const createTopic = async (name, description) => {
 
 function buildCriteriaTree(criteriaList, parentId = null) {
   return criteriaList
-    .filter(item => item.parentCriteriaId === parentId)
-    .map(item => ({
+    .filter((item) => item.parentCriteriaId === parentId)
+    .map((item) => ({
       ...item,
       subCriteria: buildCriteriaTree(criteriaList, item.criteriaId),
     }));
