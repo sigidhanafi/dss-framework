@@ -1,10 +1,14 @@
 'use client';
 
 import Stepper from '@/components/stepper';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function AlternativeRankPage() {
   const router = useRouter();
+  const { dssID } = useParams();
+
+  const [topic, setTopic] = useState();
 
   const alternatives = [
     { name: 'Sigit', score: '90.78', rank: '1' },
@@ -13,12 +17,40 @@ export default function AlternativeRankPage() {
     { name: 'Rafa', score: '60.78', rank: '4' },
   ];
 
+  const fetchDetailDss = async () => {
+    const response = await fetch('/api/dss/' + dssID, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      const data = responseJson.data;
+      // setTopic({ id: data.id, name: data.name, description: data.description });
+      // setCriterias(data.criterias);
+      // setAlternatives(data.alternatives);
+
+      setTopic({
+        name: data.topic.name,
+        topicId: data.topic.topicId,
+        description: data.topic.description,
+      });
+    } else {
+      // handle error
+    }
+  };
+
+  useEffect(() => {
+    fetchDetailDss();
+  }, []);
+
   return (
     <>
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
-        <h1 className='text-3xl font-bold'>Rank Result</h1>
-        <p>Alternative rank bases on the score</p>
+        <h1 className='text-3xl font-bold'>Topic: {topic && topic.name}</h1>
+        <p>{topic && topic.description}</p>
       </div>
 
       <Stepper step={4} />

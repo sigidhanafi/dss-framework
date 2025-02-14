@@ -2,13 +2,15 @@
 
 import Modal from '@/components/modal';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function TopicPage() {
   const router = useRouter();
 
+  const [loadingPage, setLoadingPage] = useState(true);
   const [topics, setTopics] = useState([]);
+  const [formTopic, setFormTopic] = useState({ name: '', description: '' });
   const [showForm, setShowForm] = useState(false);
 
   const fetchTopics = async () => {
@@ -18,9 +20,25 @@ export default function TopicPage() {
     });
 
     const responseJson = await response.json();
-
-    console.log('RESPONSE', responseJson);
     setTopics(responseJson.data);
+    setLoadingPage(false);
+  };
+
+  const handleCreateTopic = async () => {
+    const params = { name: formTopic.name, description: formTopic.description };
+    const response = await fetch('/api/topics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+    if (responseJson.status == 200) {
+      setShowForm(false);
+      fetchTopics();
+    } else {
+      // show notif error
+    }
   };
 
   useEffect(() => {
@@ -60,18 +78,35 @@ export default function TopicPage() {
               <span className='mx-2'>New Topic</span>
             </button>
           </div>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
-            {topics.map((item) => {
-              return (
-                <Link key={item.id} href={'/topics/' + item.id}>
-                  <div className='bg-blue-200 p-4 rounded-lg'>
-                    <p>{item.name}</p>
-                    <span className='text-xs'>by {item.author}</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+          {loadingPage == false && topics && topics.length <= 0 && (
+            <div className='mt-4 p-4 border-blue-200 border rounded-lg'>
+              <p className='text-gray-500'>
+                No topics available. Click "New Topic" to add one.{' '}
+                <button
+                  className='text-blue-400 py-2'
+                  onClick={() => {
+                    setShowForm(true);
+                  }}
+                >
+                  <span className='mx-2'>New Topic</span>
+                </button>
+              </p>
+            </div>
+          )}
+          {loadingPage == false && topics && topics.length > 0 && (
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
+              {topics.map((item) => {
+                return (
+                  <Link key={item.id} href={'/topics/' + item.id}>
+                    <div className='bg-blue-200 p-4 rounded-lg'>
+                      <p>{item.name}</p>
+                      <span className='text-xs'>by {item.author}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -93,6 +128,10 @@ export default function TopicPage() {
                 type='text'
                 className='w-full p-2 border rounded-md'
                 placeholder='Enter topic name'
+                defaultValue={formTopic.name}
+                onChange={(e) => {
+                  setFormTopic({ ...formTopic, name: e.target.value });
+                }}
               />
             </div>
             <div>
@@ -102,14 +141,17 @@ export default function TopicPage() {
               <textarea
                 className='w-full p-2 border rounded-lg'
                 placeholder='Enter topic description'
+                defaultValue={formTopic.description}
+                onChange={(e) => {
+                  setFormTopic({ ...formTopic, description: e.target.value });
+                }}
               ></textarea>
             </div>
 
             {/* Submit Button */}
             <button
               onClick={() => {
-                setShowForm(false);
-                router.push('/topics/2');
+                handleCreateTopic();
               }}
               className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
             >

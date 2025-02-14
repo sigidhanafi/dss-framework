@@ -4,10 +4,136 @@ import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import Modal from './modal';
 
-export default function SettingCriteria({ title, criteria, action }) {
-  const [showNewCriteria, setShowNewCriteria] = useState(false);
-
+export default function SettingCriteria({
+  title,
+  criteria,
+  dssCriterias,
+  topicId,
+  dssID,
+  action,
+  refetchTrigger,
+}) {
   const router = useRouter();
+
+  const [showFormCriteria, setShowFormCriteria] = useState(false);
+  const [formCriteria, setFormCriteria] = useState({
+    topicId: Number(topicId),
+    criteriaId: null,
+    name: '',
+    description: '',
+    type: '',
+    weight: 0,
+    parentCriteriaId: null,
+  });
+
+  const handleResetForm = () => {
+    // reset form
+    setFormCriteria({
+      topicId: Number(topicId),
+      name: '',
+      description: '',
+      type: '',
+      weight: 0,
+      parentCriteriaId: null,
+      criteriaId: null,
+    });
+  };
+
+  const handleSuccessCRUD = () => {
+    // reset form
+    handleResetForm();
+
+    // dismiss form
+    setShowFormCriteria(false);
+
+    // refetch trigger
+    refetchTrigger();
+  };
+
+  const handleCreateCriteria = async () => {
+    const params = { ...formCriteria };
+    const response = await fetch('/api/criterias', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      handleSuccessCRUD();
+    } else {
+      // show notif error
+    }
+  };
+
+  const handleUpdateCriteria = async () => {
+    const params = { ...formCriteria };
+    const response = await fetch('/api/criterias/' + formCriteria.criteriaId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      handleSuccessCRUD();
+    } else {
+      // show notif error
+    }
+  };
+
+  const handleCreateSubCriteria = async () => {
+    const params = { ...formCriteria };
+    const response = await fetch('/api/criterias', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      handleSuccessCRUD();
+    } else {
+      // show notif error
+    }
+  };
+
+  const handleSelectCriteria = async (criteriaId) => {
+    const params = { criteriaId };
+    const response = await fetch('/api/dss/' + dssID + '/criterias', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+
+    // if (responseJson.status == 200) {
+    //   // fetchTopics();
+    // } else {
+    //   // show notif error
+    // }
+  };
+
+  const handleRemoveCriteria = async (criteriaId) => {
+    const params = { criteriaId };
+    const response = await fetch('/api/dss/' + dssID + '/criterias', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+
+    // if (responseJson.status == 200) {
+    //   // fetchTopics();
+    // } else {
+    //   // show notif error
+    // }
+  };
 
   const renderCriteria = (data, level = 0, action) => {
     return data.map((crit, index) => {
@@ -19,6 +145,8 @@ export default function SettingCriteria({ title, criteria, action }) {
         'w-4/5',
         'w-full',
       ];
+
+      const defaultChecked = dssCriterias.includes(crit.criteriaId);
 
       return (
         <React.Fragment key={index + level}>
@@ -32,7 +160,7 @@ export default function SettingCriteria({ title, criteria, action }) {
               </div>
             </td>
             <td className='border border-gray-300 px-4 py-2 flex-grow-0'>
-              {crit.desc}
+              {crit.description}
             </td>
             <td className='border border-gray-300 px-4 py-2 text-center'>
               {crit.type}
@@ -49,7 +177,17 @@ export default function SettingCriteria({ title, criteria, action }) {
                       <button
                         className='text-blue-400 hover:text-blue-500'
                         onClick={() => {
-                          setShowNewCriteria(!showNewCriteria);
+                          setFormCriteria({
+                            ...formCriteria,
+                            name: crit.name,
+                            description: crit.description,
+                            type: crit.type,
+                            weight: crit.weight,
+                            parentCriteriaId: crit.parentCriteriaId || null,
+                            criteriaId: crit.criteriaId,
+                          });
+
+                          setShowFormCriteria(true);
                         }}
                       >
                         <svg
@@ -66,7 +204,12 @@ export default function SettingCriteria({ title, criteria, action }) {
                       <button
                         className='text-blue-500 hover:text-blue-700'
                         onClick={() => {
-                          setShowNewCriteria(!showNewCriteria);
+                          setFormCriteria({
+                            ...formCriteria,
+                            parentCriteriaId: crit.criteriaId,
+                          });
+
+                          setShowFormCriteria(true);
                         }}
                       >
                         <svg
@@ -89,8 +232,14 @@ export default function SettingCriteria({ title, criteria, action }) {
                     <label className='relative inline-flex items-center cursor-pointer'>
                       <input
                         type='checkbox'
-                        checked={false}
-                        onChange={() => {}}
+                        defaultChecked={defaultChecked}
+                        onChange={(e) => {
+                          if (e.target.checked == true) {
+                            handleSelectCriteria(Number(crit.criteriaId));
+                          } else {
+                            handleRemoveCriteria(Number(crit.criteriaId));
+                          }
+                        }}
                         className='sr-only peer'
                       />
                       <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -100,100 +249,106 @@ export default function SettingCriteria({ title, criteria, action }) {
               </td>
             )}
           </tr>
-          {crit.subcriteria &&
-            crit.subcriteria.length > 0 &&
-            renderCriteria(crit.subcriteria, level + 1, action)}
+          {crit.subCriteria &&
+            crit.subCriteria.length > 0 &&
+            renderCriteria(crit.subCriteria, level + 1, action)}
         </React.Fragment>
       );
     });
   };
 
+  // const dssCriteriaId = dssCriterias.map((criteria) => criteria.criteriaId);
+  // // {dssCriteriaId.includes(crit.criteriaId) ? defaultChecked : null}
+
   return (
     <>
       {/* Topic Selection with Criteria Table */}
-      <div className='py-8'>
-        <div className='w-3/5 mx-auto'>
-          <div className='flex justify-between my-2'>
-            <h2 className='text-xl font-semibold mb-4'>{title}</h2>
-            {action == 'setting' && (
-              <div className='flex justify-end'>
-                <button
-                  className='flex border-blue-300 border text-blue-400 px-4 py-2 rounded-lg'
-                  onClick={() => {
-                    setShowNewCriteria(!showNewCriteria);
-                  }}
+      <div className='w-3/5 mx-auto'>
+        <div className='flex justify-between my-2'>
+          <h2 className='text-xl font-semibold mb-4'>{title}</h2>
+          {action == 'setting' && (
+            <div className='flex justify-end'>
+              <button
+                className='flex border-blue-300 border text-blue-400 px-4 py-2 rounded-lg'
+                onClick={() => {
+                  setShowFormCriteria(true);
+                }}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 24 24'
+                  fill='currentColor'
+                  className='size-6'
                 >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='size-6'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                  <span className='mx-1'>New Criteria</span>
-                </button>
-              </div>
-            )}
-          </div>
-          <div className='overflow-x-auto'>
-            <table className='w-full border-collapse border border-gray-300'>
-              <thead>
-                <tr className='bg-gray-200'>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Nama Kriteria
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Deskripsi
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Tipe Kriteria
-                  </th>
-                  <th className='border border-gray-300 px-4 py-2'>
-                    Bobot Kriteria
-                  </th>
-                  {action != 'none' && (
-                    <th className='border border-gray-300 px-4 py-2'>Action</th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>{renderCriteria(criteria, 0, action)}</tbody>
-            </table>
-          </div>
-
-          {action == 'process' && (
-            <div className='flex justify-end space-x-4 my-4'>
-              <button
-                className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
-                onClick={() => {
-                  router.back();
-                }}
-              >
-                Back
-              </button>
-              <button
-                className='bg-blue-400 text-white px-4 py-2 rounded'
-                onClick={() => {
-                  router.push('/proceses/2/review-alternative');
-                }}
-              >
-                Review Alternatives
+                  <path
+                    fillRule='evenodd'
+                    d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+                <span className='mx-1'>New Criteria</span>
               </button>
             </div>
           )}
         </div>
+        <div className='overflow-x-auto'>
+          <table className='w-full border-collapse border border-gray-300'>
+            <thead>
+              <tr className='bg-gray-200'>
+                <th className='border border-gray-300 px-4 py-2'>
+                  Nama Kriteria
+                </th>
+                <th className='border border-gray-300 px-4 py-2'>Deskripsi</th>
+                <th className='border border-gray-300 px-4 py-2'>
+                  Tipe Kriteria
+                </th>
+                <th className='border border-gray-300 px-4 py-2'>
+                  Bobot Kriteria
+                </th>
+                {action != 'none' && (
+                  <th className='border border-gray-300 px-4 py-2'>Action</th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {/* criteria */}
+              {criteria &&
+                criteria.length > 0 &&
+                renderCriteria(criteria, 0, action)}
+
+              {/* empty criteria */}
+              {criteria && criteria.length <= 0 && (
+                <tr className='bg-white text-gray-700'>
+                  <td
+                    className='border border-gray-300 flex-grow text-center py-4'
+                    colSpan={action != 'none' ? 5 : 4}
+                  >
+                    <p className='text-gray-500'>
+                      No criteria available. Click "Manage".{' '}
+                      <button
+                        className='text-blue-400 py-2'
+                        onClick={() => {
+                          router.push('/topics/' + topicId + '/update');
+                        }}
+                      >
+                        <span className='mx-2'>Manage</span>
+                      </button>
+                    </p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Form to Add Criteria */}
-      {showNewCriteria && (
+      {showFormCriteria && (
         <Modal
           title={'Create New Criteria'}
           onCancel={() => {
-            setShowNewCriteria(false);
+            handleResetForm();
+            setShowFormCriteria(false);
           }}
         >
           <div className='space-y-4'>
@@ -202,10 +357,17 @@ export default function SettingCriteria({ title, criteria, action }) {
                 Criteria Name
               </label>
               <input
+                name='name'
                 className='border p-2 w-full rounded-md'
                 placeholder='Enter name'
-                value={''}
-                onChange={(e) => {}}
+                defaultValue={formCriteria.name}
+                onChange={(e) => {
+                  setFormCriteria({
+                    ...formCriteria,
+                    name: e.target.value,
+                  });
+                }}
+                autoComplete='off'
               />
             </div>
             <div>
@@ -213,22 +375,36 @@ export default function SettingCriteria({ title, criteria, action }) {
                 Description
               </label>
               <textarea
+                name='description'
                 className='w-full p-2 border rounded-lg'
                 placeholder='Enter description'
-              ></textarea>
+                defaultValue={formCriteria.description}
+                onChange={(e) => {
+                  setFormCriteria({
+                    ...formCriteria,
+                    description: e.target.value,
+                  });
+                }}
+              />
             </div>
             <div>
               <label className='block text-sm font-medium text-gray-700'>
                 Type
               </label>
               <select
+                name='type'
                 className='border p-2 w-full rounded-md'
-                value={''}
-                onChange={(e) => {}}
+                defaultValue={formCriteria.type}
+                onChange={(e) => {
+                  setFormCriteria({
+                    ...formCriteria,
+                    type: e.target.value,
+                  });
+                }}
                 placeholder={'Select type'}
               >
-                <option value='Benefit'>Benefit</option>
-                <option value='Cost'>Cost</option>
+                <option value='BENEFIT'>Benefit</option>
+                <option value='COST'>Cost</option>
               </select>
             </div>
             <div>
@@ -236,10 +412,16 @@ export default function SettingCriteria({ title, criteria, action }) {
                 Weight
               </label>
               <select
+                name='weight'
                 className='border p-2 w-full mb-2'
-                value={''}
-                onChange={(e) => {}}
-                placeholder={'Bobot'}
+                defaultValue={formCriteria.weight}
+                onChange={(e) => {
+                  setFormCriteria({
+                    ...formCriteria,
+                    weight: Number(e.target.value),
+                  });
+                }}
+                placeholder={'Weight'}
               >
                 <option value='5'>1. Sangat Rendah</option>
                 <option value='2'>2. Rendah</option>
@@ -252,10 +434,25 @@ export default function SettingCriteria({ title, criteria, action }) {
             <button
               className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
               onClick={() => {
-                setShowNewCriteria(!showNewCriteria);
+                if (
+                  formCriteria.parentCriteriaId == null &&
+                  formCriteria.criteriaId == null
+                ) {
+                  // create
+                  handleCreateCriteria();
+                } else if (formCriteria.criteriaId != null) {
+                  // update
+                  handleUpdateCriteria();
+                } else if (formCriteria.parentCriteriaId != null) {
+                  console.log('SUB', formCriteria.parentCriteriaId);
+                  // add subcriteria
+                  handleCreateSubCriteria();
+                } else {
+                  console.log('Not Handled');
+                }
               }}
             >
-              Save Criteria
+              Save
             </button>
           </div>
         </Modal>

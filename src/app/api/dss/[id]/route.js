@@ -2,42 +2,35 @@ import { NextResponse } from 'next/server';
 import { addCriterias, getDetailDss, saveDssResult } from '@/lib/services/dss';
 
 export async function GET(req, { params }) {
-    const { id } = await params;
+  const { id } = await params;
 
-    try {
-        const dss = await getDetailDss(id);
-        return NextResponse.json({
-            status: 200,
-            message: 'Success fetch alternative',
-            data: dss,
-        });
-    } catch (error) {
-        return NextResponse.json(
-            { message: 'Error fetching alternative', detail: error },
-            { status: 500 }
-        );
-    }
+  try {
+    const dss = await getDetailDss(id);
+    return NextResponse.json({
+      status: 200,
+      message: 'Success fetch alternative',
+      data: dss,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error fetching alternative', detail: error },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req, { params }) {
-    const { id } = await params;
+  const { id } = await params;
 
-    const body = await req.json();
-    const { criterias, dssResult } = body;  
-    
+  const body = await req.json();
+  const { criterias, dssResult } = body;
+
   try {
-
     let criteriaWithDssId = criterias.map((criteria) => ({
-        ...criteria, 
-        dssId: parseInt(id)
+      ...criteria,
+      dssId: parseInt(id),
     }));
     await addCriterias(criteriaWithDssId);
-
-    let dssResultWithDssId = dssResult.map((res) => ({
-        ...res, 
-        dssId: parseInt(id)
-    }));
-    await saveDssResult(dssResultWithDssId);
 
     return NextResponse.json({
       status: 200,
@@ -50,8 +43,7 @@ export async function POST(req, { params }) {
       { status: 500 }
     );
   }
-};
-
+}
 
 /*
 --> POST {url}/api/dss/:id_dss
@@ -123,5 +115,3 @@ RES BODY
     }
 }
 */
-
-

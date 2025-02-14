@@ -3,105 +3,102 @@
 import AlternativeValue from '@/components/alternative-value';
 import SettingCriteria from '@/components/setting-criteria';
 import Stepper from '@/components/stepper';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 export default function AlternativeValuePage() {
-  const [selectedMethod, setSelectedMethod] = useState('SAW');
-
   const router = useRouter();
 
-  const criteria = [
-    {
-      name: 'Pengalaman',
-      desc: 'Lama bekerja dalam bidang terkait',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      subcriteria: [
-        {
-          name: '> 5 Tahun',
-          desc: 'Pengalaman lebih dari 5 tahun',
-          type: 'Benefit',
-          weight: 'Tinggi',
-          subcriteria: [
-            {
-              name: 'Sub Sub Criteria',
-              desc: 'Sub Sub Sub',
-              type: 'Benefit',
-              weight: 'Tinggi',
-            },
-          ],
-        },
-        {
-          name: '3-5 Tahun',
-          desc: 'Pengalaman antara 3 hingga 5 tahun',
-          type: 'Benefit',
-          weight: 'Sedang',
-        },
-        {
-          name: '< 3 Tahun',
-          desc: 'Pengalaman kurang dari 3 tahun',
-          type: 'Benefit',
-          weight: 'Rendah',
-        },
-      ],
-    },
-    {
-      name: 'Universitas',
-      desc: 'Asal universitas',
-      type: 'Benefit',
-      weight: 'Tinggi',
-      subcriteria: [],
-    },
-    {
-      name: 'IPK',
-      desc: 'Indeks Prestasi Kumulatif akademik',
-      type: 'Benefit',
-      weight: 'Sedang',
-      subcriteria: [
-        {
-          name: '> 3.5',
-          desc: 'IPK lebih dari 3.5',
-          type: 'Benefit',
-          weight: 'Tinggi',
-        },
-        {
-          name: '3.0 - 3.5',
-          desc: 'IPK antara 3.0 dan 3.5',
-          type: 'Benefit',
-          weight: 'Sedang',
-        },
-        {
-          name: '< 3.0',
-          desc: 'IPK kurang dari 3.0',
-          type: 'Benefit',
-          weight: 'Rendah',
-        },
-      ],
-    },
-  ];
+  const { dssID } = useParams();
 
-  const alternatives = [
-    { name: 'Sigit' },
-    { name: 'Silmi' },
-    { name: 'Alfy' },
-    { name: 'Rafa' },
-  ];
+  const [topic, setTopic] = useState(null);
+  const [dssAlternatives, setDssAlternatives] = useState([]);
+  const [dssCriterias, setDssCriterias] = useState([]);
+  const [selectedMethod, setSelectedMethod] = useState();
+  const [criteriaParams, setCriteriaParams] = useState([]);
+
+  const constructCriteriaAndAlternativeData = (criterias, alternatives) => {
+    return criterias.map((criteria) => {
+      // If subCriteria exists, modify it recursively
+      if (criteria.subCriteria && criteria.subCriteria.length > 0) {
+        criteria.subCriteria = constructCriteriaAndAlternativeData(
+          criteria.subCriteria,
+          alternatives
+        );
+      }
+
+      // Add new data to the subCriteria array
+      if (criteria.subCriteria) {
+        criteria = { ...criteria, alternatives: alternatives };
+      }
+
+      return criteria;
+    });
+  };
+
+  const fetchDetailDss = async () => {
+    const response = await fetch('/api/dss/' + dssID, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      const data = responseJson.data;
+      setDssAlternatives(data.dssAlternatives);
+
+      setSelectedMethod(data.method);
+
+      const dssCriterias = constructCriteriaAndAlternativeData(
+        data.dssCriterias,
+        data.dssAlternatives
+      );
+      setDssCriterias(dssCriterias);
+
+      setTopic({
+        name: data.topic.name,
+        topicId: data.topic.topicId,
+        description: data.topic.description,
+      });
+    } else {
+      // handle error
+    }
+  };
+
+  const handleCalculate = () => {
+    const params = {
+      method: selectedMethod,
+      criterias: criteriaParams,
+    };
+
+    console.log(params);
+  };
+
+  useEffect(() => {
+    fetchDetailDss();
+  }, []);
 
   return (
     <>
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
-        <h1 className='text-3xl font-bold'>Topic: Memilih Kandidat Beasiswa</h1>
-        <p>Memilih kandidat penerima beasiswa LPDP 2025 jalur prestasi</p>
+        <h1 className='text-3xl font-bold'>
+          Select Method: {topic && topic.name}
+        </h1>
+        <p>{topic && topic.description}</p>
       </div>
 
       <Stepper step={3} />
 
       <AlternativeValue
-        criteria={criteria}
-        alternatives={alternatives}
+        alternatives={dssAlternatives}
         showAction={false}
+        criteriaAlternativeValue={dssCriterias}
+        dssID={dssID}
+        updateParamToParent={(params) => {
+          setCriteriaParams(params);
+        }}
       />
 
       {/* Method Selection Section */}
@@ -153,7 +150,8 @@ export default function AlternativeValuePage() {
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
-              router.replace('/proceses/2/alternative-rank');
+              // router.replace('/proceses/' + dssID + '/alternative-rank');
+              handleCalculate();
             }}
           >
             Calculate

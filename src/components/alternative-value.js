@@ -1,18 +1,73 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 export default function AlternativeValue({
-  criteria,
   alternatives,
+  criteriaAlternativeValue,
+  dssID,
   showAction = true,
+  updateParamToParent,
 }) {
-  const [isShowFormCriteria, setIsShowFormCriteria] = useState(false);
   const router = useRouter();
 
-  const renderCriteria = (criteria, level = 0, alternatives) => {
-    return criteria.map((crit, index) => {
+  const [paramCalculation, setParamCalculation] = useState([]);
+
+  const updateAlternativeCriteriaValue = async ({
+    criteriaId,
+    alternativeId,
+    value,
+  }) => {
+    const updatedParams = paramCalculation.map((item) => {
+      if (
+        item.criteriaId === criteriaId &&
+        item.alternativeId === alternativeId
+      ) {
+        return { ...item, value: Number(value) };
+      }
+      return item;
+    });
+
+    setParamCalculation(updatedParams);
+  };
+
+  const flattenParams = (criterias) => {
+    let params = [];
+
+    criterias.forEach((criteria) => {
+      alternatives.forEach((alternative) => {
+        const param = {
+          criteriaId: criteria.criteriaId,
+          alternativeId: alternative.alternative.alternativeId,
+          value: 0,
+        };
+        params.push(param);
+      });
+
+      if (criteria.subCriteria && criteria.subCriteria.length > 0) {
+        params = params.concat(flattenParams(criteria.subCriteria));
+      }
+    });
+
+    return params;
+  };
+
+  useEffect(() => {
+    const params = flattenParams(criteriaAlternativeValue);
+    setParamCalculation(params);
+  }, [criteriaAlternativeValue]);
+
+  useEffect(() => {
+    updateParamToParent(paramCalculation);
+  }, [paramCalculation]);
+
+  const renderCriteria = (
+    criteriaAlternativeValue,
+    level = 0,
+    alternatives
+  ) => {
+    return criteriaAlternativeValue.map((crit, index) => {
       const spacerWidthClasses = [
         'w-0',
         'w-1/5',
@@ -25,28 +80,54 @@ export default function AlternativeValue({
       return (
         <React.Fragment key={index + level}>
           <tr key={index + level} className='bg-white text-gray-700'>
-            <td className='border border-gray-300 flex-grow'>
+            <td className='border border-blue-300 flex-grow'>
               <div className='flex flex-row items-center'>
                 <div
-                  className={`flex bg-gray-300 h-1 ${spacerWidthClasses[level]}`}
+                  className={`flex bg-gray-300 h-6 ${spacerWidthClasses[level]}`}
                 ></div>
                 <p className='px-4'>{crit.name}</p>
               </div>
             </td>
-            {alternatives.map((alternative) => {
+            {crit.alternatives.map((alternative) => {
               return (
                 <td
-                  key={crit.name + alternative.name}
-                  className='border border-gray-300 px-4 py-2 flex-grow-0 text-center'
+                  key={crit.name + alternative.alternative.name}
+                  className='border border-gray-300 px-4 py-2 w-40 text-center'
                 >
-                  -
+                  {crit.subCriteria && crit.subCriteria.length <= 0 ? (
+                    <input
+                      name='name'
+                      className='p-2 w-full text-center'
+                      placeholder='Enter value'
+                      defaultValue={alternative.value}
+                      onChange={(e) => {
+                        updateAlternativeCriteriaValue({
+                          criteriaId: crit.criteriaId,
+                          alternativeId: alternative.alternative.alternativeId,
+                          value: e.target.value,
+                        });
+                      }}
+                      autoComplete='off'
+                      type='number'
+                    />
+                  ) : (
+                    <input
+                      name='name'
+                      className='p-2 w-full text-center'
+                      placeholder='-'
+                      defaultValue={alternative.value}
+                      disabled
+                      autoComplete='off'
+                      type='number'
+                    />
+                  )}
                 </td>
               );
             })}
           </tr>
-          {crit.subcriteria &&
-            crit.subcriteria.length > 0 &&
-            renderCriteria(crit.subcriteria, level + 1, alternatives)}
+          {crit.subCriteria &&
+            crit.subCriteria.length > 0 &&
+            renderCriteria(crit.subCriteria, level + 1, alternatives)}
         </React.Fragment>
       );
     });
@@ -66,16 +147,18 @@ export default function AlternativeValue({
                   {alternatives.map((item) => {
                     return (
                       <th
-                        key={item.name}
+                        key={item.alternative.name}
                         className='border border-gray-300 px-4 py-2'
                       >
-                        {item.name}
+                        {item.alternative.name}
                       </th>
                     );
                   })}
                 </tr>
               </thead>
-              <tbody>{renderCriteria(criteria, 0, alternatives)}</tbody>
+              <tbody>
+                {renderCriteria(criteriaAlternativeValue, 0, alternatives)}
+              </tbody>
             </table>
           </div>
           {showAction && (
