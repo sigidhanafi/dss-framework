@@ -1,5 +1,12 @@
 import { NextResponse } from 'next/server';
-import { addCriterias, calculateDss, getDetailDss, getDssResult, updateDss, updateDssMethod } from '@/lib/services/dss';
+import {
+  addCriterias,
+  calculateDss,
+  getDetailDss,
+  getDssResult,
+  updateDss,
+  updateDssMethod,
+} from '@/lib/services/dss';
 
 export async function GET(req, { params }) {
   const { id } = await params;
@@ -22,11 +29,11 @@ export async function GET(req, { params }) {
 export async function POST(req, { params }) {
   const { id } = await params;
   const body = await req.json();
-  const { method, criterias } = body;  
-    
+  const { method, criterias } = body;
+
   try {
     const _ = await updateDssMethod(parseInt(id), method);
-   
+
     let criteriaWithDssId = criterias.map((criteria) => ({
       ...criteria,
       dssId: parseInt(id),
@@ -42,12 +49,13 @@ export async function POST(req, { params }) {
       data: result,
     });
   } catch (error) {
+    console.log('ERR', error);
     return NextResponse.json(
       { message: 'Error save dss result', detail: error },
       { status: 500 }
     );
   }
-};
+}
 
 /*
 --> POST {url}/api/dss/:id_dss
