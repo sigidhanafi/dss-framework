@@ -295,6 +295,51 @@ function calculateFinalWeights(criteria, parentId = null) {
   });
 }
 
+function calculateWP(
+  weightMap,
+  alternatives,
+  criteria,
+  parentCriteriaId = null
+) {
+  // console.log("PARENTID: ", parentCriteriaId)
+  const filteredCriteria = criteria.filter(
+    (c) => c.parentCriteriaId === parentCriteriaId
+  );
+  // console.log("filteredCriteria: ", filteredCriteria)
+  if (filteredCriteria.length === 0) return {}; // Base case
+
+  let scores = {};
+
+  filteredCriteria.forEach((criterion) => {
+    const subScores = calculateWP(
+      weightMap,
+      alternatives,
+      criteria,
+      criterion.criteriaId
+    );
+    //   console.log("subscore:", subScores);
+    alternatives.forEach((alt) => {
+      // console.log(Object.keys(subScores).length > 0);
+      // console.log("subscore dalam alt: ", subScores);
+      const subScore =
+        Object.keys(subScores).length > 0
+          ? Math.pow(
+              subScores[alt.alternativeId],
+              weightMap[criterion.criteriaId]
+            )
+          : Math.pow(
+              alt.values[criterion.criteriaId] || 1,
+              weightMap[criterion.criteriaId] || 0
+            );
+
+      // console.log("scores di criteria %s dan alt %d adalah: %d", criterion.criteriaId, alt.alternativeId, subScore )
+
+      scores[alt.alternativeId] = (scores[alt.alternativeId] || 1) * subScore;
+    });
+  });
+  return scores;
+}
+
 function calculateSAW(
   weightMap,
   alternatives,
