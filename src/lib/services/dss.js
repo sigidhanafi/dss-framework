@@ -123,17 +123,17 @@ export const addCriterias = async (data) => {
 };
 
 export const saveDssScore = async (dssId, ranking) => {
-  console.log(dssId);
-  console.log(ranking);
-  await Promise.all(
-    ranking.map((data) =>
-      prisma.dssAlternative.updateMany({
-        where: { dssId: dssId, alternativeId: data.alternativeId },
-        data: { sValue: data.score, rankValue: data.ranking },
-      })
-    )
-  );
-  return;
+    // console.log(dssId);
+    // console.log(ranking)
+    await Promise.all(
+        ranking.map((data) =>
+          prisma.dssAlternative.updateMany({
+            where: {dssId: dssId, alternativeId: data.alternativeId},
+            data: { sValue: data.score, rankValue: data.ranking }
+          })
+        )
+      );
+    return;
 };
 
 export const getDssResult = async (dssId) => {
@@ -223,22 +223,22 @@ export const calculateDss = async (dssId, method) => {
     if (method == DssMethodType.WP) {
         methodResult = Object.entries(calculateWP(weightMap, alternatives, criterias))   
     } else if (method == DssMethodType.SAW) {
-        const normalizedAlternatives = normalizeAlternatives(criterias, alternatives);
+        const normalizedAlternatives = normalizeSawAlternatives(criterias, alternatives);
         methodResult = Object.entries(calculateSAW(weightMap, normalizedAlternatives, criterias))   
     } else if (method == DssMethodType.TOPSIS) {
-        // METODE TOPSIS
+        methodResult = Object.entries(calculateTopsis(alternatives, criterias)).map(item => item[1])
     };
     const ranking = methodResult
             .map(([alternativeId, score]) => ({ alternativeId: Number(alternativeId), score })) 
             .sort((a, b) => b.score - a.score)
             .map((item, index) => ({ ...item, ranking: index + 1 }));   
     
-    console.log(ranking)
+    // console.log("ranking: ", ranking)
     await saveDssScore(dssId, ranking);
     return;
 };
 
-function normalizeAlternatives(criteria, alternatives) {
+function normalizeSawAlternatives(criteria, alternatives) {
     let minMaxValues = {};
 
     // Cari nilai min/max sesuai tipe criteria
@@ -309,3 +309,96 @@ function calculateSAW(weightMap, alternatives, criteria, parentCriteriaId = null
     // console.log("FINISH PARENTID: ", parentCriteriaId)
     return scores;
 };
+
+
+function calculateAggregatedValues(alternatives, criterias) {
+    let criteriaMap = Object.fromEntries(criterias.map(c => [c.criteriaId, { ...c, children: [] }]));
+
+    // Bangun tree kriteria (Hubungkan parent dengan children)
+    criterias.forEach(c => {
+        if (c.parentCriteriaId !== null) {
+            criteriaMap[c.parentCriteriaId].children.push(criteriaMap[c.criteriaId]);
+        }
+    });
+
+    // Rekursif buat ngitung nilai tiap root criteria
+    function aggregateValues(criterion, altValues) {
+        if (criterion.children.length === 0) {
+            return altValues[criterion.criteriaId] || 0;
+        }
+
+        return criterion.children.reduce((sum, child) => {
+            return sum + (aggregateValues(child, altValues) * child.weight);
+        }, 0);
+    }
+
+    return alternatives.map(alt => ({
+        alternativeId: alt.alternativeId,
+        name: alt.name,
+        values: Object.fromEntries(
+            Object.values(criteriaMap)
+                .filter(c => c.parentCriteriaId === null) // Ambil root criteria aja
+                .map(c => [c.criteriaId, aggregateValues(c, alt.values)])
+        ),
+    }));
+}
+
+function calculateTopsis(alternatives, criterias) {
+    alternatives = calculateAggregatedValues(alternatives, criterias);
+
+    const criteriaIds = criterias.filter(c => c.parentCriteriaId === null).map(c => c.criteriaId);
+
+    // 1️⃣ Normalisasi Matriks Keputusan
+    let sumSquares = {};
+    criteriaIds.forEach(cId => {
+        sumSquares[cId] = Math.sqrt(
+            alternatives.reduce((sum, alt) => sum + Math.pow(alt.values[cId] || 0, 2), 0)
+        );
+    });
+
+    let normalizedMatrix = alternatives.map(alt => ({
+        alternativeId: alt.alternativeId,
+        name: alt.name,
+        values: Object.fromEntries(
+            criteriaIds.map(cId => [cId, (alt.values[cId] || 0) / (sumSquares[cId] || 1)])
+        ),
+    }));
+
+    // 2️⃣ Normalisasi Bobot (Weighted Normalized Decision Matrix)
+    let weightedMatrix = normalizedMatrix.map(alt => ({
+        alternativeId: alt.alternativeId,
+        name: alt.name,
+        values: Object.fromEntries(
+            criteriaIds.map(cId => {
+                let weight = criterias.find(c => c.criteriaId === cId)?.weight || 0;
+                return [cId, alt.values[cId] * weight];
+            })
+        ),
+    }));
+
+    // 3️⃣ Tentuin A⁺ & A⁻
+    let idealBest = {}, idealWorst = {};
+    criteriaIds.forEach(cId => {
+        let isBenefit = criterias.find(c => c.criteriaId === cId)?.type === "BENEFIT";
+        let values = weightedMatrix.map(alt => alt.values[cId]);
+        idealBest[cId] = isBenefit ? Math.max(...values) : Math.min(...values);
+        idealWorst[cId] = isBenefit ? Math.min(...values) : Math.max(...values);
+    });
+
+    // 4️⃣ Hitung D⁺ & D⁻
+    let scores = weightedMatrix.map(alt => {
+        let dPlus = Math.sqrt(
+            criteriaIds.reduce((sum, cId) => sum + Math.pow(alt.values[cId] - idealBest[cId], 2), 0)
+        );
+        let dMinus = Math.sqrt(
+            criteriaIds.reduce((sum, cId) => sum + Math.pow(alt.values[cId] - idealWorst[cId], 2), 0)
+        );
+        return {
+            alternativeId: alt.alternativeId,
+            name: alt.name,
+            score: dMinus / (dPlus + dMinus),
+        };
+    });
+
+    return scores;
+}
