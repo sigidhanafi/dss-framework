@@ -59,19 +59,21 @@ export default function AlternativeRankPage() {
               </tr>
             </thead>
             <tbody>
-              {dssAlternatives.map((item, index) => (
-                <tr key={index} className='text-center'>
-                  <td className='border border-gray-300 p-2'>
-                    {item.alternative.name}
-                  </td>
-                  <td className='border border-gray-300 p-2'>
-                    {item.sValue.toFixed(3)}
-                  </td>
-                  <td className='border border-gray-300 p-2'>
-                    {item.rankValue}
-                  </td>
-                </tr>
-              ))}
+              {dssAlternatives
+                .sort((a, b) => a.rankValue - b.rankValue)
+                .map((item, index) => (
+                  <tr key={index} className='text-center'>
+                    <td className='border border-gray-300 p-2'>
+                      {item.alternative.name}
+                    </td>
+                    <td className='border border-gray-300 p-2'>
+                      {item.sValue.toFixed(3)}
+                    </td>
+                    <td className='border border-gray-300 p-2'>
+                      {item.rankValue}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

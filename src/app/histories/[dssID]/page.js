@@ -69,15 +69,6 @@ export default function DssDetailPage() {
     }
   };
 
-  const handleCalculate = () => {
-    const params = {
-      method: selectedMethod,
-      criterias: criteriaParams,
-    };
-
-    router.push('/proceses/' + dssID + '/alternative-rank');
-  };
-
   useEffect(() => {
     fetchDetailDss();
   }, []);
@@ -86,9 +77,7 @@ export default function DssDetailPage() {
     <>
       {/* Header / Title */}
       <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
-        <h1 className='text-3xl font-bold'>
-          Select Method: {topic && topic.name}
-        </h1>
+        <h1 className='text-3xl font-bold'>Topic: {topic && topic.name}</h1>
         <p>{topic && topic.description}</p>
       </div>
 
@@ -108,9 +97,9 @@ export default function DssDetailPage() {
             className={`border p-4 rounded shadow-sm text-center flex items-center justify-between`}
           >
             <div className='flex-grow'>
-              <h3 className='text-lg font-semibold'>WP</h3>
+              <h3 className='text-lg font-semibold'>{selectedMethod}</h3>
               <p className='text-gray-600'>
-                Metode WP untuk pengambilan keputusan
+                Metode {selectedMethod} untuk pengambilan keputusan
               </p>
             </div>
             <svg
@@ -140,17 +129,21 @@ export default function DssDetailPage() {
             </tr>
           </thead>
           <tbody>
-            {dssAlternatives.map((item, index) => (
-              <tr key={index} className='text-center'>
-                <td className='border border-gray-300 p-2'>
-                  {item.alternative.name}
-                </td>
-                <td className='border border-gray-300 p-2'>
-                  {item.sValue && item.sValue.toFixed(3)}
-                </td>
-                <td className='border border-gray-300 p-2'>{item.rankValue}</td>
-              </tr>
-            ))}
+            {dssAlternatives
+              .sort((a, b) => a.rankValue - b.rankValue)
+              .map((item, index) => (
+                <tr key={index} className='text-center'>
+                  <td className='border border-gray-300 p-2'>
+                    {item.alternative.name}
+                  </td>
+                  <td className='border border-gray-300 p-2'>
+                    {item.sValue && item.sValue.toFixed(3)}
+                  </td>
+                  <td className='border border-gray-300 p-2'>
+                    {item.rankValue}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
