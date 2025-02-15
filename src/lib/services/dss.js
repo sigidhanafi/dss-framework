@@ -366,8 +366,9 @@ function calculateSAW(
     });
     // console.log("scores: ",scores)
     // console.log("FINISH PARENTID: ", parentCriteriaId)
+    })
     return scores;
-};
+}
 
 
 function calculateAggregatedValues(alternatives, criterias) {
