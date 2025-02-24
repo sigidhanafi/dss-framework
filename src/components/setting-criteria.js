@@ -137,6 +137,20 @@ export default function SettingCriteria({
       const defaultChecked =
         dssCriterias && dssCriterias.includes(crit.criteriaId);
 
+      let bobotText = '';
+      switch (crit.weight) {
+        case 1:
+          bobotText = 'Sangat Rendah';
+        case 2:
+          bobotText = 'Rendah';
+        case 3:
+          bobotText = 'Sedang';
+        case 4:
+          bobotText = 'Tinggi';
+        case 5:
+          bobotText = 'Sangat Tinggi';
+      }
+
       return (
         <React.Fragment key={index + level}>
           <tr key={index + level} className='bg-white text-gray-700'>
@@ -155,7 +169,7 @@ export default function SettingCriteria({
               {crit.type}
             </td>
             <td className='border border-gray-300 px-4 py-2 text-center'>
-              {crit.weight}
+              {bobotText}
             </td>
             {action != 'none' && (
               <td className='border border-gray-300'>
