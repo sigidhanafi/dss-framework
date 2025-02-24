@@ -13,7 +13,7 @@ export default function LoginPage() {
   return (
     <>
       {/* Header / Title */}
-      <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
+      <div className='flex flex-col items-center justify-center min-h-20 mt-20 mx-4'>
         <h1 className='text-3xl font-bold'>Login User</h1>
         <p>Login to process your DSS Topic</p>
       </div>

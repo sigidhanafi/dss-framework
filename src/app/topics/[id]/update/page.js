@@ -127,7 +127,7 @@ export default function CriteriaUpdate() {
   return (
     <>
       {/* Header / Title */}
-      <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
+      <div className='flex flex-col items-center justify-center min-h-20 mt-20 mx-4'>
         <h1 className='text-3xl font-bold'>
           Manage Topic: Memilih Kandidat Beasiswa
         </h1>

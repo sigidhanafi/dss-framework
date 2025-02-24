@@ -27,8 +27,10 @@ export default function RootLayout({ children }) {
           {/* Navbar */}
           <nav className='fixed top-0 left-0 right-0 bg-white flex py-4 border-b shadow-sm z-50'>
             {/* <nav className='flex bg-white p-4 shadow-sm items-center justify-center'> */}
-            <div className='flex flex-row mx-auto w-3/5 justify-between'>
-              <div className='text-xl font-semibold'>DSS Framework</div>
+            <div className='flex flex-row w-11/12 md:w-4/5 lg:w-3/5 mx-auto justify-between'>
+              <div className='hidden md:flex text-xl font-semibold'>
+                DSS Framework
+              </div>
               <div className='space-x-6 text-gray-600'>
                 <Link href={'/'} className='hover:text-blue-500'>
                   Home
@@ -39,9 +41,9 @@ export default function RootLayout({ children }) {
                 <Link href={'/histories'} className='hover:text-blue-500'>
                   Histories
                 </Link>
-                <Link href={'/login'} className='hover:text-blue-500'>
+                {/* <Link href={'/login'} className='hover:text-blue-500'>
                   Login
-                </Link>
+                </Link> */}
               </div>
             </div>
           </nav>
