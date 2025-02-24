@@ -1,6 +1,7 @@
 'use client';
 
 import AlternativeValue from '@/components/alternative-value';
+import Modal from '@/components/modal';
 import SettingCriteria from '@/components/setting-criteria';
 import Stepper from '@/components/stepper';
 import { useRouter, useParams } from 'next/navigation';
@@ -14,8 +15,9 @@ export default function AlternativeValuePage() {
   const [topic, setTopic] = useState(null);
   const [dssAlternatives, setDssAlternatives] = useState([]);
   const [dssCriterias, setDssCriterias] = useState([]);
-  const [selectedMethod, setSelectedMethod] = useState();
+  const [selectedMethod, setSelectedMethod] = useState(null);
   const [criteriaParams, setCriteriaParams] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const constructCriteriaAndAlternativeData = (criterias, alternatives) => {
     return criterias.map((criteria) => {
@@ -67,9 +69,25 @@ export default function AlternativeValuePage() {
   };
 
   const handleCalculate = async () => {
+    const paramWithFalseValue = criteriaParams.filter(
+      (param) => param.hasChild != true && param.value == 0
+    );
+
+    if (paramWithFalseValue.length > 0) {
+      setErrorMessage(
+        'Alternative criteria is required. Please fill it out before submitting the form.'
+      );
+      return;
+    }
+
+    if (selectedMethod == null) {
+      setErrorMessage('Please chose the method before submitting the form.');
+      return;
+    }
+
     const params = {
       method: selectedMethod,
-      criterias: criteriaParams,
+      criterias: criteriaParams.map(({ hasChild, ...rest }) => rest),
     };
 
     const response = await fetch('/api/dss/' + dssID, {
@@ -94,7 +112,7 @@ export default function AlternativeValuePage() {
   return (
     <>
       {/* Header / Title */}
-      <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
+      <div className='flex flex-col items-center justify-center min-h-20 mt-20 mx-4'>
         <h1 className='text-3xl font-bold'>
           Select Method: {topic && topic.name}
         </h1>
@@ -113,7 +131,7 @@ export default function AlternativeValuePage() {
       />
 
       {/* Method Selection Section */}
-      <div className='w-3/5 mx-auto mt-10'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto mt-10'>
         <h2 className='text-lg font-semibold mb-4'>Choose Method</h2>
         <div className='grid grid-cols-3 gap-6'>
           {['WP', 'SAW', 'TOPSIS'].map((method, index) => (
@@ -148,7 +166,34 @@ export default function AlternativeValuePage() {
           ))}
         </div>
       </div>
-      <div className='w-3/5 mx-auto my-10'>
+
+      {errorMessage && (
+        <Modal
+          title={'Error'}
+          onCancel={() => {
+            setErrorMessage(null);
+          }}
+        >
+          <div className='space-y-4'>
+            <div>
+              <label className='block text-md text-gray-700'>
+                {errorMessage}
+              </label>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              onClick={() => {
+                setErrorMessage(null);
+              }}
+              className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
+            >
+              Check Form
+            </button>
+          </div>
+        </Modal>
+      )}
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto my-10'>
         <div className='flex justify-end space-x-4 my-4'>
           <button
             className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
@@ -164,7 +209,7 @@ export default function AlternativeValuePage() {
               handleCalculate();
             }}
           >
-            Calculate
+            Result Rank
           </button>
         </div>
       </div>

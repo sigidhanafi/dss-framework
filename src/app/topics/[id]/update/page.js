@@ -127,7 +127,7 @@ export default function CriteriaUpdate() {
   return (
     <>
       {/* Header / Title */}
-      <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
+      <div className='flex flex-col items-center justify-center min-h-20 mt-20 mx-4'>
         <h1 className='text-3xl font-bold'>
           Manage Topic: Memilih Kandidat Beasiswa
         </h1>
@@ -151,7 +151,7 @@ export default function CriteriaUpdate() {
       />
 
       {/* Action */}
-      <div className='w-3/5 mx-auto my-10'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto my-10'>
         <div className='flex justify-end space-x-4 my-4'>
           <button
             className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'

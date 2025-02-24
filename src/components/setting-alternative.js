@@ -120,7 +120,7 @@ export default function SettingAlternative({
 
   return (
     <>
-      <div className='w-3/5 mx-auto my-10'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto my-10'>
         <div className='flex justify-between my-2'>
           <h2 className='text-xl font-semibold mb-4'>{title}</h2>
           {action == 'setting' && (

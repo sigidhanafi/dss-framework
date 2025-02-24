@@ -23,9 +23,6 @@ export default function ReviewAlternativePage() {
     const responseJson = await response.json();
     if (responseJson.status == 200) {
       const data = responseJson.data;
-      // setTopic({ id: data.id, name: data.name, description: data.description });
-      // setCriterias(data.criterias);
-      // setAlternatives(data.alternatives);
 
       setDssAlternatives(
         data.dssAlternatives.map((item) => item.alternative.alternativeId)
@@ -74,7 +71,7 @@ export default function ReviewAlternativePage() {
   return (
     <>
       {/* Header / Title */}
-      <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
+      <div className='flex flex-col items-center justify-center min-h-20 mt-20 mx-4'>
         <h1 className='text-3xl font-bold'>
           Review Alternatives: {topic && topic.name}
         </h1>
@@ -94,7 +91,7 @@ export default function ReviewAlternativePage() {
         />
       )}
 
-      <div className='w-3/5 mx-auto'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto'>
         <div className='flex justify-end space-x-4 my-4'>
           <button
             className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'
@@ -104,13 +101,23 @@ export default function ReviewAlternativePage() {
           >
             Back
           </button>
+          {topic && (
+            <button
+              className='bg-blue-400 text-white px-4 py-2 rounded'
+              onClick={() => {
+                router.push('/topics/' + topic.topicId + '/update');
+              }}
+            >
+              Setting Alternatives
+            </button>
+          )}
           <button
             className='bg-blue-400 text-white px-4 py-2 rounded'
             onClick={() => {
               router.push('/proceses/' + dssID + '/alternative-value');
             }}
           >
-            Review Process
+            Next
           </button>
         </div>
       </div>

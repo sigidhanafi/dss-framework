@@ -266,7 +266,7 @@ export default function SettingCriteria({
   return (
     <>
       {/* Topic Selection with Criteria Table */}
-      <div className='w-3/5 mx-auto'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto'>
         <div className='flex justify-between my-2'>
           <h2 className='text-xl font-semibold mb-4'>{title}</h2>
           {action == 'setting' && (

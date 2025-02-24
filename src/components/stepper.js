@@ -1,6 +1,6 @@
 export default function Stepper({ step }) {
   return (
-    <div className='w-3/5 mx-auto my-10 flex justify-between'>
+    <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto my-10 flex justify-between'>
       {[1, 2, 3, 4].map((num) => (
         <div
           key={num}
@@ -15,7 +15,7 @@ export default function Stepper({ step }) {
           >
             {num}
           </div>
-          <p className='mt-2 text-sm'>
+          <p className='mt-2 text-sm text-center'>
             {num === 1
               ? 'Choose Topic & Setting Criteria'
               : num === 2

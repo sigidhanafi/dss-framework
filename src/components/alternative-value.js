@@ -51,6 +51,7 @@ export default function AlternativeValue({
           criteriaId: criteria.criteriaId,
           alternativeId: alternative.alternative.alternativeId,
           value: 0,
+          hasChild: criteria.subCriteria && criteria.subCriteria.length > 0,
         };
         params.push(param);
       });
@@ -148,7 +149,7 @@ export default function AlternativeValue({
     <>
       {/* Topic Selection with Criteria Table */}
       <div className='py-8'>
-        <div className='w-3/5 mx-auto'>
+        <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto'>
           <h2 className='text-xl font-semibold mb-4'>Alternatives</h2>
           <div className='overflow-x-auto'>
             <table className='w-full border-collapse border border-gray-300'>

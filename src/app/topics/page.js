@@ -48,13 +48,13 @@ export default function TopicPage() {
   return (
     <>
       {/* Header / Title */}
-      <div className='flex flex-col items-center justify-center min-h-20 mt-20'>
+      <div className='flex flex-col items-center justify-center min-h-20 mt-20 mx-4'>
         <h1 className='text-3xl font-bold'>Explore Topic</h1>
         <p>Explore and use topic that relevant with your problem</p>
       </div>
 
       {/* List of Topic */}
-      <div className='w-3/5 mx-auto text-center rounded-lg'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto text-center rounded-lg'>
         <div className='py-8 text-center'>
           <div className='mx-auto flex justify-end'>
             <button
