@@ -151,7 +151,7 @@ export default function CriteriaUpdate() {
       />
 
       {/* Action */}
-      <div className='w-3/5 mx-auto my-10'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto my-10'>
         <div className='flex justify-end space-x-4 my-4'>
           <button
             className='bg-gray-200 text-gray-500 px-4 py-2 rounded hover:bg-gray-300'

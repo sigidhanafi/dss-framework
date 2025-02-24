@@ -18,7 +18,7 @@ export default function LoginPage() {
         <p>Login to process your DSS Topic</p>
       </div>
 
-      <div className='w-1/5 mx-auto my-10'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto my-10'>
         {/* Login Form */}
         <div className='space-y-4'>
           <div>

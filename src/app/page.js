@@ -32,9 +32,9 @@ export default function Home() {
       </div>
 
       {/* How it Work Section */}
-      <div className='w-3/5 mx-auto border-blue-200 border text-center rounded-lg py-6 px-6'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto border-blue-200 border text-center rounded-lg py-6 px-6'>
         <h2 className='text-xl font-semibold mb-6'>How it Work</h2>
-        <div className='grid grid-cols-4 gap-6 justify-center'>
+        <div className='flex flex-col lg:flex-row justify-center flex-shrink'>
           {[
             {
               img: '/criteria.png',
@@ -47,18 +47,42 @@ export default function Home() {
             },
             { img: '/ranking.png', text: 'Ranking Result' },
           ].map((item, index) => (
-            <div key={index} className='flex flex-col items-center text-center'>
-              <div className='w-40 h-40 bg-blue-50 rounded-full flex items-center justify-center'>
-                <img src={item.img} alt={item.text} className='w-16 h-16' />
+            <div className='flex flex-1' key={index}>
+              <div className='flex flex-col mx-auto items-center'>
+                <div className='w-40 h-40 bg-blue-50 rounded-full flex items-center justify-center'>
+                  <img src={item.img} alt={item.text} className='w-16 h-16' />
+                </div>
+                <div className='flex mx-auto mt-2 mb-8 px-2'>
+                  <p className=' text-gray-700'>
+                    {index + 1}. {item.text}
+                  </p>
+                </div>
               </div>
-              <p className='mt-2 px-2 text-gray-700'>{item.text}</p>
+              {index < 3 && (
+                <div className='hidden xl:flex xl:flex-col items-center justify-center -mt-20'>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth='1.5'
+                    stroke='currentColor'
+                    className='size-12 text-blue-200'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3'
+                    />
+                  </svg>
+                </div>
+              )}
             </div>
           ))}
         </div>
       </div>
 
       {/* Topic Selection */}
-      <div className='w-3/5 mx-auto py-8 text-center rounded-lg'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto py-8 text-center rounded-lg'>
         <div className='py-8 text-center'>
           <div className='flex justify-between items-center'>
             <h2 className='text-xl font-semibold'>Explore Topic</h2>

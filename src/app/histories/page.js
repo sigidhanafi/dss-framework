@@ -36,7 +36,7 @@ export default function HistoryPage() {
       </div>
 
       {/* List of DSS */}
-      <div className='w-3/5 mx-auto text-center rounded-lg'>
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto text-center rounded-lg'>
         <div className='py-8 text-center'>
           {loadingPage == false && dss && dss.length <= 0 && (
             <div className='mt-4 p-4 border-blue-200 border rounded-lg'>
