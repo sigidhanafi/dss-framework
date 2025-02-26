@@ -1,24 +1,101 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+## 📦 Prerequisites
 
-First, run the development server:
+Make sure you have the following software installed:
+
+- [Node.js](https://nodejs.org/) (recommended version 18.x or higher)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [Git](https://git-scm.com/)
+
+Check if they are installed by running:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+node -v
+npm -v
+git --version
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🔄 Clone Repository from GitHub
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Fork** this repository (if necessary) to your GitHub account.
+2. **Clone** the repository to your local machine:
+
+```bash
+git clone https://github.com/username/repository-name.git
+cd repository-name
+```
+
+*Replace `username` and `repository-name` with your GitHub username and the repository name.*
+
+---
+
+## 📂 Install Dependencies
+
+Use **npm** or **yarn** to install the dependencies:
+
+### Using npm:
+```bash
+npm install
+```
+
+### Using yarn:
+```bash
+yarn install
+```
+
+---
+
+## 🚀 Running the Application Locally
+
+After the dependencies are installed, run the following command:
+
+### Using npm:
+```bash
+npm run dev
+```
+
+### Using yarn:
+```bash
+yarn dev
+```
+
+The application will run at [http://localhost:3000](http://localhost:3000).
+
+---
+
+## ⚙️ Project Structure
+
+```bash
+├── pages/             # Next.js pages
+├── public/            # Static files (images, favicon, etc.)
+├── styles/            # CSS/Styling files
+├── components/        # Reusable React components
+├── package.json       # Project configuration and dependencies
+└── next.config.js     # Next.js custom configuration
+```
+
+---
+
+## 🛠️ Building for Production
+
+To build the application for production, run:
+
+### Using npm:
+```bash
+npm run build
+npm start
+```
+
+### Using yarn:
+```bash
+yarn build
+yarn start
+```
+
+---
 
 ## Learn More
 
