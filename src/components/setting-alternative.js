@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from './modal';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -22,6 +22,9 @@ export default function SettingAlternative({
     alternativeId: null,
     topicId: Number(topicId),
   });
+  const [formValidation, setFormValidation] = useState({
+    name: '',
+  });
 
   const handleResetForm = () => {
     // reset form
@@ -31,6 +34,21 @@ export default function SettingAlternative({
       description: '',
       alternativeId: null,
     });
+  };
+
+  const validateForm = () => {
+    let name = '';
+    if (formAlternative.name.length <= 0) {
+      name = 'Name is required';
+    }
+
+    setFormValidation({ ...formValidation, name });
+
+    if (name.length > 0) {
+      return false;
+    }
+
+    return true;
   };
 
   const handleSuccessCRUD = () => {
@@ -45,6 +63,10 @@ export default function SettingAlternative({
   };
 
   const handleCreateAlternative = async () => {
+    if (validateForm() == false) {
+      return;
+    }
+
     const params = { ...formAlternative };
     const response = await fetch('/api/alternatives', {
       method: 'POST',
@@ -62,8 +84,11 @@ export default function SettingAlternative({
   };
 
   const handleUpdateAlternative = async () => {
+    if (validateForm() == false) {
+      return;
+    }
+
     const params = { ...formAlternative };
-    console.log('PATAM', params);
     const response = await fetch(
       '/api/alternatives/' + formAlternative.alternativeId,
       {
@@ -307,6 +332,9 @@ export default function SettingAlternative({
                 placeholder='Enter name'
                 defaultValue={formAlternative.name}
                 onChange={(e) => {
+                  if (e.target.value.length > 0) {
+                    setFormValidation({ ...formValidation, name: '' });
+                  }
                   setFormAlternative({
                     ...formAlternative,
                     name: e.target.value,
@@ -314,6 +342,9 @@ export default function SettingAlternative({
                 }}
                 autoComplete='off'
               />
+              <span className='text-sm text-red-500'>
+                {formValidation.name}
+              </span>
             </div>
             <div>
               <label className='block text-sm font-medium text-gray-700'>
@@ -336,6 +367,11 @@ export default function SettingAlternative({
             {/* Submit Button */}
             <button
               onClick={() => {
+                // call validation
+                if (validateForm() == false) {
+                  return;
+                }
+
                 if (formAlternative.alternativeId == null) {
                   handleCreateAlternative();
                 } else if (!isNaN(formAlternative.alternativeId)) {
