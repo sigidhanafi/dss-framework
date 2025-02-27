@@ -25,6 +25,11 @@ export default function SettingCriteria({
     weight: 0,
     parentCriteriaId: null,
   });
+  const [formValidation, setFormValidation] = useState({
+    name: '',
+    type: '',
+    weight: '',
+  });
 
   const handleResetForm = () => {
     // reset form
@@ -37,6 +42,31 @@ export default function SettingCriteria({
       parentCriteriaId: null,
       criteriaId: null,
     });
+
+    setFormValidation({ name: '', type: '', weight: '' });
+  };
+
+  const validateForm = () => {
+    let name = '';
+    let type = '';
+    let weight = '';
+    if (formCriteria.name.length <= 0) {
+      name = 'Name is required';
+    }
+    if (formCriteria.type.length <= 0) {
+      type = 'Type is required';
+    }
+    if (formCriteria.weight == 0) {
+      weight = 'Weight is required';
+    }
+
+    setFormValidation({ ...formValidation, name, type, weight });
+
+    if (name.length > 0 || type.length > 0 || weight.length > 0) {
+      return false;
+    }
+
+    return true;
   };
 
   const handleSuccessCRUD = () => {
@@ -51,6 +81,10 @@ export default function SettingCriteria({
   };
 
   const handleCreateCriteria = async () => {
+    if (validateForm() == false) {
+      return;
+    }
+
     const params = { ...formCriteria };
     const response = await fetch('/api/criterias', {
       method: 'POST',
@@ -68,6 +102,10 @@ export default function SettingCriteria({
   };
 
   const handleUpdateCriteria = async () => {
+    if (validateForm() == false) {
+      return;
+    }
+
     const params = { ...formCriteria };
     const response = await fetch('/api/criterias/' + formCriteria.criteriaId, {
       method: 'PUT',
@@ -85,6 +123,10 @@ export default function SettingCriteria({
   };
 
   const handleCreateSubCriteria = async () => {
+    if (validateForm() == false) {
+      return;
+    }
+
     const params = { ...formCriteria };
     const response = await fetch('/api/criterias', {
       method: 'POST',
@@ -365,6 +407,9 @@ export default function SettingCriteria({
                 placeholder='Enter name'
                 defaultValue={formCriteria.name}
                 onChange={(e) => {
+                  if (e.target.value.length > 0) {
+                    setFormValidation({ ...formValidation, name: '' });
+                  }
                   setFormCriteria({
                     ...formCriteria,
                     name: e.target.value,
@@ -372,6 +417,9 @@ export default function SettingCriteria({
                 }}
                 autoComplete='off'
               />
+              <span className='text-sm text-red-500'>
+                {formValidation.name}
+              </span>
             </div>
             <div>
               <label className='block text-sm font-medium text-gray-700'>
@@ -399,16 +447,22 @@ export default function SettingCriteria({
                 className='border p-2 w-full rounded-md'
                 defaultValue={formCriteria.type}
                 onChange={(e) => {
+                  if (e.target.value.length > 0) {
+                    setFormValidation({ ...formValidation, type: '' });
+                  }
                   setFormCriteria({
                     ...formCriteria,
                     type: e.target.value,
                   });
                 }}
-                placeholder={'Select type'}
               >
+                <option value=''>Select Type</option>
                 <option value='BENEFIT'>Benefit</option>
                 <option value='COST'>Cost</option>
               </select>
+              <span className='text-sm text-red-500'>
+                {formValidation.type}
+              </span>
             </div>
             <div>
               <label className='block text-sm font-medium text-gray-700'>
@@ -416,9 +470,12 @@ export default function SettingCriteria({
               </label>
               <select
                 name='weight'
-                className='border p-2 w-full mb-2'
+                className='border p-2 w-full'
                 defaultValue={formCriteria.weight}
                 onChange={(e) => {
+                  if (e.target.value != 0) {
+                    setFormValidation({ ...formValidation, weight: '' });
+                  }
                   setFormCriteria({
                     ...formCriteria,
                     weight: Number(e.target.value),
@@ -426,17 +483,26 @@ export default function SettingCriteria({
                 }}
                 placeholder={'Weight'}
               >
+                <option value='0'>Select Weight</option>
                 <option value='5'>1. Sangat Rendah</option>
                 <option value='2'>2. Rendah</option>
                 <option value='3'>3. Sedang</option>
                 <option value='4'>4. Tinggi</option>
                 <option value='5'>5. Sangat Tinggi</option>
               </select>
+              <span className='text-sm text-red-500'>
+                {formValidation.weight}
+              </span>
             </div>
 
             <button
               className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
               onClick={() => {
+                // call validation
+                if (validateForm() == false) {
+                  return;
+                }
+
                 if (
                   formCriteria.parentCriteriaId == null &&
                   formCriteria.criteriaId == null
@@ -447,7 +513,6 @@ export default function SettingCriteria({
                   // update
                   handleUpdateCriteria();
                 } else if (formCriteria.parentCriteriaId != null) {
-                  console.log('SUB', formCriteria.parentCriteriaId);
                   // add subcriteria
                   handleCreateSubCriteria();
                 } else {
