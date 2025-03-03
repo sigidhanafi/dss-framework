@@ -8,6 +8,7 @@ export async function fetchTopics(params) {
   const response = await fetch(`${API_URL}/api/topics`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
+    cache: 'no-store',
   });
 
   const responseJson = await response.json();
