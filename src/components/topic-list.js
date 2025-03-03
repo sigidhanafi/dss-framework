@@ -5,7 +5,7 @@ import Modal from './modal';
 import { useState } from 'react';
 import { createTopic } from '@/lib/actions/topic';
 
-export default function TopicList({ data: topics }) {
+export default function TopicList({ data: topics, view }) {
   const [formTopic, setFormTopic] = useState({ name: '', description: '' });
   const [formValidation, setFormValidation] = useState({ name: '' });
   const [showForm, setShowForm] = useState(false);
@@ -43,28 +43,42 @@ export default function TopicList({ data: topics }) {
     <>
       <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto text-center rounded-lg'>
         <div className='py-8 text-center'>
-          <div className='mx-auto flex justify-end'>
-            <button
-              className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
-              onClick={() => {
-                setShowForm(true);
-              }}
-            >
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 24 24'
-                fill='currentColor'
-                className='size-6'
+          {view == 'home' && (
+            <div className='flex justify-between items-center'>
+              <h2 className='text-xl font-semibold'>Explore Topic</h2>
+              <Link
+                href={'/topics'}
+                className='text-sm text-gray-600 hover:text-blue-500'
               >
-                <path
-                  fillRule='evenodd'
-                  d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z'
-                  clipRule='evenodd'
-                />
-              </svg>
-              <span className='mx-2'>New Topic</span>
-            </button>
-          </div>
+                Lihat Semua
+              </Link>
+            </div>
+          )}
+
+          {view == 'explore' && (
+            <div className='mx-auto flex justify-end'>
+              <button
+                className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
+                onClick={() => {
+                  setShowForm(true);
+                }}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 24 24'
+                  fill='currentColor'
+                  className='size-6'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+                <span className='mx-2'>New Topic</span>
+              </button>
+            </div>
+          )}
 
           {topics && topics.length <= 0 && (
             <div className='mt-4 p-4 border-blue-200 border rounded-lg'>

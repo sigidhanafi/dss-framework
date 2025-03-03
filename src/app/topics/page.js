@@ -30,7 +30,7 @@ export default async function TopicPage() {
       </div>
 
       {/* List of Topic */}
-      <TopicList data={topics} />
+      <TopicList data={topics} view={'explore'} />
     </>
   );
 }
