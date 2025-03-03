@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Modal from './modal';
 import { useState } from 'react';
-import { createTopic } from '@/app/topics/action';
+import { createTopic } from '@/lib/actions/topic';
 
 export default function TopicList({ data: topics }) {
   const [formTopic, setFormTopic] = useState({ name: '', description: '' });

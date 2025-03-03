@@ -1,8 +1,20 @@
 import TopicList from '@/components/topic-list';
 import { notFound } from 'next/navigation';
-import { fetchTopics } from './action';
 
 export default async function TopicPage() {
+  const fetchTopics = async (params) => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    const response = await fetch(`${API_URL}/api/topics`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+
+    const responseJson = await response.json();
+    return responseJson.data;
+  };
+
+  // server side data
   const topics = await fetchTopics();
 
   if (!topics) {
