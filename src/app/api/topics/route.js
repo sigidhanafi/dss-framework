@@ -4,6 +4,11 @@ import { createTopic, getTopics } from '@/lib/services/topics';
 export async function GET() {
   try {
     const topics = await getTopics();
+
+    if (!topics) {
+      return NextResponse.json({ message: 'Topic not found' }, { status: 404 });
+    }
+
     return NextResponse.json({
       status: 200,
       message: 'Success fetch topic',

@@ -1,4 +1,4 @@
-import prisma from '../prisma';
+import prisma from './prisma';
 import { buildCriteriaTree } from './topics.js';
 
 export const createCriteria = async (data) => {

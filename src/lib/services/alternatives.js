@@ -1,4 +1,4 @@
-import prisma from '../prisma';
+import prisma from './prisma';
 
 export const createAlternative = async (topicId, name, description) => {
   const alternative = await prisma.alternative.create({
@@ -54,12 +54,11 @@ export const deleteAlternative = async (alternativeId) => {
 
 export const createDssAlternative = async (data) => {
   const dssAlternative = await prisma.dssAlternative.create({
-      data: data,
+    data: data,
   });
-  
+
   return dssAlternative;
 };
-
 
 // NITIP DULU
 export const deleteDssAlternative = async (alternativeId, dssId) => {
@@ -80,19 +79,20 @@ export const deleteDssAlternative = async (alternativeId, dssId) => {
 };
 
 export const getDssAltenatives = async (q) => {
-  console.log(q)
+  console.log(q);
   const dssAlternative = await prisma.dssAlternative.findMany({
-      where: q,
-      select: {
-          alternative: {
-              select: {
-                alternativeId: true,
-                name: true,
-                description: true
-              }
-          },
-  }});
-  const alternativeList = dssAlternative.flatMap(Object.values);    
-  
+    where: q,
+    select: {
+      alternative: {
+        select: {
+          alternativeId: true,
+          name: true,
+          description: true,
+        },
+      },
+    },
+  });
+  const alternativeList = dssAlternative.flatMap(Object.values);
+
   return alternativeList;
 };
