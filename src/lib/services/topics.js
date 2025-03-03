@@ -40,6 +40,11 @@ export const getTopicDetail = async (id) => {
       },
     },
   });
+
+  if (topic == null) {
+    return null;
+  }
+
   const flatCriteriaList = await prisma.criteria.findMany({
     where: { topicId: parseInt(id) },
     select: {
