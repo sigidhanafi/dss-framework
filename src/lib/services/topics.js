@@ -1,6 +1,6 @@
 import prisma from './prisma';
 
-export const getTopics = async () => {
+export const getTopics = async ({ page, limit }) => {
   const topics = await prisma.topic.findMany({
     select: {
       topicId: true,
@@ -12,6 +12,8 @@ export const getTopics = async () => {
         },
       },
     },
+    skip: Number(page - 1) * Number(limit),
+    take: Number(limit),
   });
 
   const aliasesTopicList = topics.map((topic) => ({

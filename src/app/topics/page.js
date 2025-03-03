@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 export default async function TopicPage() {
   const fetchTopics = async (params) => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    const response = await fetch(`${API_URL}/api/topics`, {
+    const response = await fetch(`${API_URL}/api/topics?page=1&limit=10`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',

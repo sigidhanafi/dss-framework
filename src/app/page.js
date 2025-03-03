@@ -3,7 +3,7 @@ import TopicList from '@/components/topic-list';
 export default async function Home() {
   const fetchTopics = async () => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    const response = await fetch(`${API_URL}/api/topics`, {
+    const response = await fetch(`${API_URL}/api/topics?page=1&limit=10`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',

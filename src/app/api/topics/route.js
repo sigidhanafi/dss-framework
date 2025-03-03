@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { createTopic, getTopics } from '@/lib/services/topics';
 
-export async function GET() {
+export async function GET(request) {
+  const searchParams = request.nextUrl.searchParams;
+  const page = searchParams.get('page') || 1;
+  const limit = searchParams.get('limit') || 6;
   try {
-    const topics = await getTopics();
+    const topics = await getTopics({ page, limit });
 
     if (!topics) {
       return NextResponse.json({ message: 'Topic not found' }, { status: 404 });
