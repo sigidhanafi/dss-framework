@@ -15,7 +15,6 @@ export async function createTopic(params) {
 
   if (responseJson.status == 200) {
     revalidatePath('/topics');
-    revalidateTag('topics');
   }
 
   return responseJson.status;

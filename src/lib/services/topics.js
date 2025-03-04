@@ -16,6 +16,8 @@ export const getTopics = async ({ page, limit }) => {
     take: Number(limit),
   });
 
+  const count = await prisma.topic.count();
+
   const aliasesTopicList = topics.map((topic) => ({
     id: topic.topicId,
     name: topic.name,
@@ -23,7 +25,11 @@ export const getTopics = async ({ page, limit }) => {
     author: topic.creator.name,
   }));
 
-  return aliasesTopicList;
+  return {
+    data: aliasesTopicList,
+    page: Number(page),
+    total_page: Math.ceil(count / Number(limit)),
+  };
 };
 
 export const getTopicDetail = async (id) => {

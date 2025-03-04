@@ -15,7 +15,11 @@ export async function GET(request) {
     return NextResponse.json({
       status: 200,
       message: 'Success fetch topic',
-      data: topics,
+      data: topics.data,
+      pagination: {
+        page: topics.page,
+        total_page: topics.total_page,
+      },
     });
   } catch (error) {
     return NextResponse.json(

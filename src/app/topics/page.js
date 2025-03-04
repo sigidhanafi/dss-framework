@@ -1,25 +1,35 @@
+import Pagination from '@/components/pagination';
 import TopicList from '@/components/topic-list';
 import { notFound } from 'next/navigation';
 
-export default async function TopicPage() {
-  const fetchTopics = async (params) => {
+export default async function TopicPage({ searchParams }) {
+  const fetchTopics = async (page) => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
-    const response = await fetch(`${API_URL}/api/topics?page=1&limit=10`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${API_URL}/api/topics?page=${page}&limit=10`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+      }
+    );
 
-    const responseJson = await response.json();
-    return responseJson.data;
+    return await response.json();
   };
 
-  // server side data
-  const topics = await fetchTopics();
+  // get param ?page
+  const params = await searchParams;
+  const page = params.page || 1;
 
-  if (!topics) {
+  // server side data fetching
+  const response = await fetchTopics(page);
+
+  if (!response && response.status == 404) {
     notFound();
   }
+
+  const topics = response.data;
+  const pagination = response.pagination;
 
   return (
     <>
@@ -31,6 +41,8 @@ export default async function TopicPage() {
 
       {/* List of Topic */}
       <TopicList data={topics} view={'explore'} />
+
+      <Pagination page={pagination.page} total={pagination.total_page} />
     </>
   );
 }
