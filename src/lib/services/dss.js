@@ -1,5 +1,5 @@
 import { CriteriaType, DssMethodType } from '@prisma/client';
-import prisma from '../prisma';
+import prisma from './prisma';
 import { buildCriteriaTree } from './topics.js';
 
 export const createDss = async (topicId) => {

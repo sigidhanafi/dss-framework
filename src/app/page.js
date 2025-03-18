@@ -1,27 +1,19 @@
-'use client';
+import TopicList from '@/components/topic-list';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-
-export default function Home() {
-  const router = useRouter();
-
-  const [topics, setTopics] = useState([]);
-
+export default async function Home() {
   const fetchTopics = async () => {
-    const response = await fetch('/api/topics', {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    const response = await fetch(`${API_URL}/api/topics?page=1&limit=10`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
     });
 
     const responseJson = await response.json();
-    setTopics(responseJson.data);
+    return responseJson.data;
   };
 
-  useEffect(() => {
-    fetchTopics();
-  }, []);
+  const topics = await fetchTopics();
 
   return (
     <>
@@ -82,32 +74,7 @@ export default function Home() {
       </div>
 
       {/* Topic Selection */}
-      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto py-8 text-center rounded-lg'>
-        <div className='py-8 text-center'>
-          <div className='flex justify-between items-center'>
-            <h2 className='text-xl font-semibold'>Explore Topic</h2>
-            <Link
-              href={'/topics'}
-              className='text-sm text-gray-600 hover:text-blue-500'
-            >
-              Lihat Semua
-            </Link>
-          </div>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
-            {topics &&
-              topics.length > 0 &&
-              topics.map((topic) => {
-                return (
-                  <Link href={'/topics/' + topic.id} key={topic.id}>
-                    <div className='border-blue-200 border p-4 rounded-lg'>
-                      {topic.name}
-                    </div>
-                  </Link>
-                );
-              })}
-          </div>
-        </div>
-      </div>
+      <TopicList data={topics} view={'home'} />
     </>
   );
 }

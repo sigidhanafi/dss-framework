@@ -1,6 +1,6 @@
-import prisma from '../prisma';
+import prisma from './prisma';
 
-export const getTopics = async () => {
+export const getTopics = async ({ page, limit }) => {
   const topics = await prisma.topic.findMany({
     select: {
       topicId: true,
@@ -12,7 +12,11 @@ export const getTopics = async () => {
         },
       },
     },
+    skip: Number(page - 1) * Number(limit),
+    take: Number(limit),
   });
+
+  const count = await prisma.topic.count();
 
   const aliasesTopicList = topics.map((topic) => ({
     id: topic.topicId,
@@ -21,7 +25,11 @@ export const getTopics = async () => {
     author: topic.creator.name,
   }));
 
-  return aliasesTopicList;
+  return {
+    data: aliasesTopicList,
+    page: Number(page),
+    total_page: Math.ceil(count / Number(limit)),
+  };
 };
 
 export const getTopicDetail = async (id) => {
@@ -40,6 +48,11 @@ export const getTopicDetail = async (id) => {
       },
     },
   });
+
+  if (topic == null) {
+    return null;
+  }
+
   const flatCriteriaList = await prisma.criteria.findMany({
     where: { topicId: parseInt(id) },
     select: {

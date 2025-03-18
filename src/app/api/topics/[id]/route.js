@@ -6,6 +6,11 @@ export async function GET(req, { params }) {
 
   try {
     const topics = await getTopicDetail(id);
+
+    if (!topics) {
+      return NextResponse.json({ message: 'Topic not found' }, { status: 404 });
+    }
+
     return NextResponse.json({
       status: 200,
       message: 'Success fetch topic',
