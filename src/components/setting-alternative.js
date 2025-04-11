@@ -129,6 +129,9 @@ export default function SettingAlternative({
       body: JSON.stringify(params),
     });
 
+    // refetch trigger
+    refetchTrigger();
+
     const responseJson = await response.json();
   };
 
@@ -139,6 +142,9 @@ export default function SettingAlternative({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params),
     });
+
+    // refetch trigger
+    refetchTrigger();
 
     const responseJson = await response.json();
   };
@@ -181,7 +187,9 @@ export default function SettingAlternative({
                 <th className='border border-gray-300 px-4 py-2'>Name</th>
                 <th className='border border-gray-300 px-4 py-2'>Deskripsi</th>
                 {action != 'none' && (
-                  <th className='border border-gray-300 px-4 py-2'>Action</th>
+                  <th className='border border-gray-300 px-4 py-2 w-48'>
+                    Action
+                  </th>
                 )}
               </tr>
             </thead>
@@ -207,6 +215,26 @@ export default function SettingAlternative({
                       {action == 'setting' && (
                         <td className='border border-gray-300'>
                           <div className='flex px-4 py-2 text-center justify-center space-x-4'>
+                            <label className='relative inline-flex items-center cursor-pointer'>
+                              <input
+                                type='checkbox'
+                                defaultChecked={defaultChecked}
+                                onChange={(e) => {
+                                  if (e.target.checked == true) {
+                                    handleSelectAlternative(
+                                      Number(alternative.alternativeId)
+                                    );
+                                  } else {
+                                    handleRemoveAlternative(
+                                      Number(alternative.alternativeId)
+                                    );
+                                  }
+                                }}
+                                className='sr-only peer'
+                              />
+                              <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+
                             {/* edit alternative */}
                             <button
                               className='text-blue-400 hover:text-blue-500'

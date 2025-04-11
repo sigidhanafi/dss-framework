@@ -152,6 +152,9 @@ export default function SettingCriteria({
     });
 
     const responseJson = await response.json();
+
+    // refetch trigger
+    refetchTrigger();
   };
 
   const handleRemoveCriteria = async (criteriaId) => {
@@ -163,6 +166,9 @@ export default function SettingCriteria({
     });
 
     const responseJson = await response.json();
+
+    // refetch trigger
+    refetchTrigger();
   };
 
   const renderCriteria = (data, level = 0, action) => {
@@ -215,9 +221,26 @@ export default function SettingCriteria({
             </td>
             {action != 'none' && (
               <td className='border border-gray-300'>
-                <div className='flex px-4 py-2 text-center justify-between'>
+                <div className='flex px-4 py-2 text-center justify-center space-x-4'>
                   {action == 'setting' && (
                     <>
+                      {/* active */}
+                      <label className='relative inline-flex items-center cursor-pointer'>
+                        <input
+                          type='checkbox'
+                          defaultChecked={defaultChecked}
+                          onChange={(e) => {
+                            if (e.target.checked == true) {
+                              handleSelectCriteria(Number(crit.criteriaId));
+                            } else {
+                              handleRemoveCriteria(Number(crit.criteriaId));
+                            }
+                          }}
+                          className='sr-only peer'
+                        />
+                        <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+
                       {/* edit criteria */}
                       <button
                         className='text-blue-400 hover:text-blue-500'
@@ -351,7 +374,9 @@ export default function SettingCriteria({
                   Bobot Kriteria
                 </th>
                 {action != 'none' && (
-                  <th className='border border-gray-300 px-4 py-2'>Action</th>
+                  <th className='border border-gray-300 px-4 py-2 w-48'>
+                    Action
+                  </th>
                 )}
               </tr>
             </thead>
