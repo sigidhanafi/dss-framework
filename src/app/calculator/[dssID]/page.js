@@ -19,6 +19,7 @@ export default function CalculatorPage() {
   const [dssCriteriaIds, setDssCriteriaIds] = useState([]);
   const [dssAlternatives, setDssAlternatives] = useState([]);
   const [dssCriterias, setDssCriterias] = useState([]);
+  const [dssCriteriaAlternatives, setDssCriteriaAlternatives] = useState([]);
   const [criteriaParams, setCriteriaParams] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -80,6 +81,8 @@ export default function CalculatorPage() {
         data.dssAlternatives
       );
       setDssCriterias(dssCriterias);
+
+      setDssCriteriaAlternatives(data.dssCriteriaAlternatives);
 
       setTopic({
         name: data.topic.name,
@@ -226,6 +229,7 @@ export default function CalculatorPage() {
       <AlternativeValue
         alternatives={dssAlternatives}
         criteriaAlternativeValue={dssCriterias}
+        dssCriteriaAlternatives={dssCriteriaAlternatives}
         dssID={dssID}
         updateParamToParent={(params) => {
           setCriteriaParams(params);

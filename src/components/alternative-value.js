@@ -15,11 +15,12 @@ export default function AlternativeValue({
   const [paramCalculation, setParamCalculation] = useState([]);
 
   const getValue = (dssCriteriaAlternatives, alternativeId, criteriaId) => {
-    const match = dssCriteriaAlternatives.find(
-      (item) =>
+    const match = dssCriteriaAlternatives.find((item) => {
+      return (
         item.alternative.alternativeId === alternativeId &&
         item.criteria.criteriaId === criteriaId
-    );
+      );
+    });
 
     return match ? match.value : null; // Kembalikan null jika tidak ditemukan
   };
@@ -42,22 +43,32 @@ export default function AlternativeValue({
     setParamCalculation(updatedParams);
   };
 
-  const flattenParams = (criterias) => {
+  const flattenParams = (criterias, existingCriteriaValue) => {
     let params = [];
 
     criterias.forEach((criteria) => {
       alternatives.forEach((alternative) => {
+        const existingValue = existingCriteriaValue.find((existing) => {
+          return (
+            existing.criteria.criteriaId == criteria.criteriaId &&
+            existing.alternative.alternativeId ==
+              alternative.alternative.alternativeId
+          );
+        });
+
         const param = {
           criteriaId: criteria.criteriaId,
           alternativeId: alternative.alternative.alternativeId,
-          value: 0,
+          value: existingValue ? existingValue.value : 0,
           hasChild: criteria.subCriteria && criteria.subCriteria.length > 0,
         };
         params.push(param);
       });
 
       if (criteria.subCriteria && criteria.subCriteria.length > 0) {
-        params = params.concat(flattenParams(criteria.subCriteria));
+        params = params.concat(
+          flattenParams(criteria.subCriteria, existingCriteriaValue)
+        );
       }
     });
 
@@ -65,9 +76,12 @@ export default function AlternativeValue({
   };
 
   useEffect(() => {
-    const params = flattenParams(criteriaAlternativeValue);
+    const params = flattenParams(
+      criteriaAlternativeValue,
+      dssCriteriaAlternatives
+    );
     setParamCalculation(params);
-  }, [criteriaAlternativeValue]);
+  }, [criteriaAlternativeValue, dssCriteriaAlternatives]);
 
   useEffect(() => {
     updateParamToParent(paramCalculation);
@@ -121,6 +135,11 @@ export default function AlternativeValue({
                         name='name'
                         className='p-2 w-full text-center'
                         placeholder='Enter value'
+                        defaultValue={getValue(
+                          dssCriteriaAlternatives,
+                          alternative.alternative.alternativeId,
+                          crit.criteriaId
+                        )}
                         onChange={(e) => {
                           updateAlternativeCriteriaValue({
                             criteriaId: crit.criteriaId,
@@ -150,7 +169,7 @@ export default function AlternativeValue({
       {/* Topic Selection with Criteria Table */}
       <div className='py-8'>
         <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto'>
-          <h2 className='text-xl font-semibold mb-4'>Alternatives</h2>
+          <h2 className='text-xl font-semibold mb-4'>Alternatives Value</h2>
           <div className='overflow-x-auto'>
             <table className='w-full border-collapse border border-gray-300'>
               <thead>
