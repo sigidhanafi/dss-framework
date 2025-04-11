@@ -189,14 +189,19 @@ export default function SettingCriteria({
       switch (crit.weight) {
         case 1:
           bobotText = 'Sangat Rendah';
+          break;
         case 2:
           bobotText = 'Rendah';
+          break;
         case 3:
           bobotText = 'Sedang';
+          break;
         case 4:
           bobotText = 'Tinggi';
+          break;
         case 5:
           bobotText = 'Sangat Tinggi';
+          break;
       }
 
       return (
@@ -509,7 +514,7 @@ export default function SettingCriteria({
                 placeholder={'Weight'}
               >
                 <option value='0'>Select Weight</option>
-                <option value='5'>1. Sangat Rendah</option>
+                <option value='1'>1. Sangat Rendah</option>
                 <option value='2'>2. Rendah</option>
                 <option value='3'>3. Sedang</option>
                 <option value='4'>4. Tinggi</option>
