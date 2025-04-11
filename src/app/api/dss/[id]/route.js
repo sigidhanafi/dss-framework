@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import {
   addCriterias,
   calculateDss,
+  deletePrevCriteriaAlternative,
   getDetailDss,
   getDssResult,
   updateDss,
@@ -34,6 +35,8 @@ export async function POST(req, { params }) {
   try {
     const _ = await updateDssMethod(parseInt(id), method);
 
+    await deletePrevCriteriaAlternative(parseInt(id));
+
     let criteriaWithDssId = criterias.map((criteria) => ({
       ...criteria,
       dssId: parseInt(id),
@@ -49,7 +52,6 @@ export async function POST(req, { params }) {
       data: result,
     });
   } catch (error) {
-    console.log('ERR', error);
     return NextResponse.json(
       { message: 'Error save dss result', detail: error },
       { status: 500 }

@@ -114,6 +114,16 @@ export const getDetailDss = async (dssId) => {
   return dss;
 };
 
+export const deletePrevCriteriaAlternative = async (dssId) => {
+  const _ = await prisma.dssCriteriaAlternative.deleteMany({
+    where: {
+      dssId: dssId,
+    },
+  });
+
+  return;
+};
+
 export const addCriterias = async (data) => {
   const _ = await prisma.dssCriteriaAlternative.createMany({
     data: data,

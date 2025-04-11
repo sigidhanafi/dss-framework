@@ -1,6 +1,7 @@
 'use client';
 
 import AlternativeValue from '@/components/alternative-value';
+import Modal from '@/components/modal';
 import SettingAlternative from '@/components/setting-alternative';
 import SettingCriteria from '@/components/setting-criteria';
 import Stepper from '@/components/stepper';
@@ -19,6 +20,7 @@ export default function CalculatorPage() {
   const [dssAlternatives, setDssAlternatives] = useState([]);
   const [dssCriterias, setDssCriterias] = useState([]);
   const [criteriaParams, setCriteriaParams] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const flattenCriteriaIds = (criterias) => {
     let ids = [];
@@ -135,6 +137,43 @@ export default function CalculatorPage() {
     }
   };
 
+  const handleCalculate = async () => {
+    const paramWithFalseValue = criteriaParams.filter(
+      (param) => param.hasChild != true && param.value == 0
+    );
+
+    if (paramWithFalseValue.length > 0) {
+      setErrorMessage(
+        'Alternative criteria is required. Please fill it out before submitting the form.'
+      );
+      return;
+    }
+
+    // if (selectedMethod == null) {
+    //   setErrorMessage('Please chose the method before submitting the form.');
+    //   return;
+    // }
+
+    const params = {
+      method: 'SAW',
+      criterias: criteriaParams.map(({ hasChild, ...rest }) => rest),
+    };
+
+    const response = await fetch('/api/dss/' + dssID, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    });
+
+    const responseJson = await response.json();
+
+    if (responseJson.status == 200) {
+      fetchDetailDss();
+    } else {
+      // show notif error
+    }
+  };
+
   const refetchTrigger = () => {
     fetchCriteriaByTopic();
     fetchAlternativeByTopic();
@@ -193,6 +232,19 @@ export default function CalculatorPage() {
         }}
       />
 
+      <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto'>
+        <div className='flex justify-end space-x-4 my-4'>
+          <button
+            className='bg-blue-400 text-white px-4 py-2 rounded'
+            onClick={() => {
+              handleCalculate();
+            }}
+          >
+            Calculate
+          </button>
+        </div>
+      </div>
+
       <div className='py-8 pb-32'>
         <div className='w-11/12 md:w-4/5 lg:w-3/5 mx-auto'>
           <h2 className='text-xl font-semibold mb-4'>Alternative Rank</h2>
@@ -213,7 +265,7 @@ export default function CalculatorPage() {
                       {item.alternative.name}
                     </td>
                     <td className='border border-gray-300 p-2'>
-                      {/* {item.sValue.toFixed(3)} */}
+                      {item.sValue && item.sValue.toFixed(3)}
                     </td>
                     <td className='border border-gray-300 p-2'>
                       {item.rankValue}
@@ -224,6 +276,33 @@ export default function CalculatorPage() {
           </table>
         </div>
       </div>
+
+      {errorMessage && (
+        <Modal
+          title={'Error'}
+          onCancel={() => {
+            setErrorMessage(null);
+          }}
+        >
+          <div className='space-y-4'>
+            <div>
+              <label className='block text-md text-gray-700'>
+                {errorMessage}
+              </label>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              onClick={() => {
+                setErrorMessage(null);
+              }}
+              className='flex bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500'
+            >
+              Check Form
+            </button>
+          </div>
+        </Modal>
+      )}
     </>
   );
 }
